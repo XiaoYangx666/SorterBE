@@ -3,7 +3,7 @@ import { generateUUID } from "./func";
 export const libName = "SAPI-Pro";
 
 export const packInfo: PackInfo = {
-  name: "一键整理Sorter", //行为包名
+  name: "Sorter自动整理", //行为包名
   version: 0.1, //行为包版本
   author: "XiaoYangx666", //作者
 };
