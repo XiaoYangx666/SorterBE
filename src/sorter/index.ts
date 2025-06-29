@@ -1,7 +1,7 @@
 import { Block, Container, ItemStack, Player, system, world } from "@minecraft/server";
 import { Command, pcommand } from "SAPI-Pro/Command/main.js";
 import { intervalBus } from "SAPI-Pro/Event.js";
-import { FormManager } from "SAPI-Pro/Form/main.js";
+import { formManager } from "SAPI-Pro/Form/main.js";
 import { distance, getAllPlayers } from "SAPI-Pro/func.js";
 import { mes, sortDirs, sortMethods } from "./methods.js";
 import { sorter_auto, sorter_autoback, sorter_dir, sorter_method } from "./sorterUI.js";
@@ -26,7 +26,7 @@ async function sortInventory(container: Container | undefined, isPlyaerInv: bool
         for (let i = 0; i < itemArray.length; i++) {
             const topitem = result[result.length - 1];
             const item = itemArray[i];
-            if (topitem && topitem.typeId == item.typeId && topitem.amount < topitem.maxAmount) {
+            if (topitem && topitem.typeId == item.typeId && topitem.isStackableWith(item) && topitem.amount < topitem.maxAmount) {
                 //可以合并
                 if (topitem.amount + item.amount <= topitem.maxAmount) {
                     topitem.amount += item.amount;
@@ -83,11 +83,12 @@ function isSortPlayer(player: Player, block: Block | undefined) {
 //命令
 const sortShortCommand = new Command("r", "整理背包或容器", false, sortHandler);
 const sorter = new Command("sorter", "打开自动整理设置", false, (player, args) => {
-    FormManager.open(player, "sorter.main", {}, 5);
+    formManager.openNamed(player, "sorter.main", {}, 5);
 });
 
 pcommand.registerCommand(sortShortCommand);
 pcommand.registerCommand(sorter);
+pcommand.registerNative(sorter);
 
 //自动整理订阅
 world.afterEvents.playerInteractWithBlock.subscribe((t) => {

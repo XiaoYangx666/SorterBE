@@ -1,5 +1,12 @@
-import { Container, ItemStack, Player } from "@minecraft/server";
+import { Container, ItemStack, Player, world } from "@minecraft/server";
 import { ids } from "./id";
+
+const idMap: Record<string, number> = {};
+world.afterEvents.worldLoad.subscribe(() => {
+    for (let i = 0; i < ids.length; i++) {
+        idMap[ids[i]] = i;
+    }
+});
 
 export function mes(player: Player, text: string) {
     player.sendMessage("§2[一键整理]§r" + text);
@@ -42,8 +49,8 @@ interface Comparefunc {
 export const compareByID = (a: ItemStack, b: ItemStack) => {
     const aId = a.typeId.split(":")[1];
     const bId = b.typeId.split(":")[1];
-    let first = ids[aId] ?? 2000;
-    let second = ids[bId] ?? 2000;
+    let first = idMap[aId] ?? 2000;
+    let second = idMap[bId] ?? 2000;
     if (first == second) {
         if (first == 2000) return compareByName(a, b);
         if (Compares[aId]) return Compares[aId](a, b);

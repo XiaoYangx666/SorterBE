@@ -2,3 +2,4 @@ scripts
 node_modules
 build
 *.mcpack
+src/SAPI-Pro
