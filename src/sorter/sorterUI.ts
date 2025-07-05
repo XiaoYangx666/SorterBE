@@ -1,8 +1,7 @@
 import { system } from "@minecraft/server";
 import { ModalFormData } from "@minecraft/server-ui";
-import { ScoreBoardDataBase } from "SAPI-Pro/DataBase";
-import { formManager, SAPIProForm } from "SAPI-Pro/Form/main";
 import { sortDirs, sortMethods } from "./methods";
+import { ScoreBoardDataBase, SAPIProForm, formManager } from "sapi-pro";
 //相关计分板
 export const sorter_auto = new ScoreBoardDataBase("sorter_auto");
 export const sorter_method = new ScoreBoardDataBase("sorter_method");

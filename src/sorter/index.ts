@@ -1,10 +1,10 @@
 import { Block, Container, ItemStack, Player, system, world } from "@minecraft/server";
-import { Command, pcommand } from "SAPI-Pro/Command/main.js";
-import { intervalBus } from "SAPI-Pro/Event.js";
-import { formManager } from "SAPI-Pro/Form/main.js";
-import { distance, getAllPlayers } from "SAPI-Pro/func.js";
+import { Command, pcommand } from "sapi-pro";
+import { formManager } from "sapi-pro";
+import { distance, getAllPlayers } from "sapi-pro/scripts/func.js";
 import { mes, sortDirs, sortMethods } from "./methods.js";
 import { sorter_auto, sorter_autoback, sorter_dir, sorter_method } from "./sorterUI.js";
+import { intervalBus } from "sapi-pro/scripts/Event.js";
 
 //自动整理黑名单
 const blackList = ["hopper", "furnace", "lit_furnace", "smoker", "lit_smoker", "blast_furnace", "lit_blast_furnace", "dropper", "dispenser", "brewing_stand"];

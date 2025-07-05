@@ -4,7 +4,7 @@
         "description": "MCBE Auto Sorter",
         "name": "Sorter自动整理",
         "uuid": "30c36031-59ea-4892-9b09-4dfd33ef0fc9",
-        "version": [1, 2, 0],
+        "version": [1, 2, 1],
         "min_engine_version": [1, 21, 0]
     },
     "modules": [
