@@ -87,6 +87,7 @@ const sorter = new Command("sorter", "打开自动整理设置", false, (player,
 });
 
 pcommand.registerCommand(sortShortCommand);
+pcommand.registerNative(sortShortCommand);
 pcommand.registerCommand(sorter);
 pcommand.registerNative(sorter);
 
