@@ -1,8 +1,8 @@
 ## SorterBE
 
-![Requires](https://img.shields.io/badge/基于-SAPI_Pro%20v0.3-blue) ![Support](https://img.shields.io/badge/支持版本-MCBE1.21.9x-green)
+![Requires](https://img.shields.io/badge/基于-SAPI_Pro%20v0.3-blue) ![Support](https://img.shields.io/badge/支持版本-MCBE1.21.100-green)
 
-<img src="/screenshot.jpg" width="350px">
+<img src="screenshot.jpg" width="350px">
 
 ### 简介
 
