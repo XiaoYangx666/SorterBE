@@ -1,4 +1,4 @@
-import { Container, ItemStack, Player, world } from "@minecraft/server";
+import { Container, ItemComponentTypes, ItemStack, Player, world } from "@minecraft/server";
 import { ids } from "./id";
 
 const idMap: Record<string, number> = {};
@@ -12,31 +12,34 @@ export function mes(player: Player, text: string) {
     player.sendMessage("§2[一键整理]§r" + text);
 }
 
+const cleanId = (id: string) => id.replace(/:(long_|strong_)+/, ":");
 //特殊比较方法
 const comparePotion = (a: ItemStack, b: ItemStack) => {
-    const aPotion = a.getComponent("potion");
-    const bPotion = b.getComponent("potion");
+    const aPotion = a.getComponent(ItemComponentTypes.Potion);
+    const bPotion = b.getComponent(ItemComponentTypes.Potion);
     if (!aPotion || !bPotion) return 0;
-    if (aPotion.potionEffectType.id > bPotion.potionEffectType.id) {
-        return 1;
-    } else if (aPotion.potionEffectType.id == bPotion.potionEffectType.id) {
-        if (aPotion.potionLiquidType.id > bPotion.potionLiquidType.id) {
-            return 1;
-        } else if (aPotion.potionLiquidType.id == bPotion.potionLiquidType.id) {
-            if (aPotion.potionModifierType.id > bPotion.potionModifierType.id) {
-                return 1;
-            } else if (aPotion.potionModifierType.id == bPotion.potionModifierType.id) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else {
-            return -1;
-        }
-    } else {
-        return -1;
+
+    const aId = cleanId(aPotion.potionEffectType.id);
+    const bId = cleanId(bPotion.potionEffectType.id);
+    if (aId !== bId) return aId > bId ? 1 : -1;
+
+    // 比较投递方式
+    if (aPotion.potionDeliveryType.id !== bPotion.potionDeliveryType.id) {
+        return aPotion.potionDeliveryType.id > bPotion.potionDeliveryType.id ? 1 : -1;
     }
+
+    // 同种类 + 同 deliveryType → 比较效果
+    const aTicks = aPotion.potionEffectType.durationTicks ?? 0;
+    const bTicks = bPotion.potionEffectType.durationTicks ?? 0;
+    const aStrong = aPotion.potionEffectType.id.includes("strong");
+    const bStrong = bPotion.potionEffectType.id.includes("strong");
+
+    if (aStrong !== bStrong) return aStrong ? 1 : -1;
+    if (aTicks !== bTicks) return aTicks > bTicks ? 1 : -1;
+
+    return 0;
 };
+
 //特殊比较方法
 export const Compares: Record<string, Function> = {
     potion: comparePotion,

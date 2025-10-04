@@ -5,3 +5,5 @@ build
 src/SAPI-Pro
 package-lock.json
 cache
+tools/data.json
+tools/vanilla.json
