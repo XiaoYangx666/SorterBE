@@ -76,25 +76,28 @@ export const compareByName = (a: ItemStack, b: ItemStack) => {
 export const sortMethods: Record<string, Comparefunc> = { "按ID表顺序整理(默认)": compareByID, 按字母顺序整理: compareByName };
 
 //整理方向
-interface SortDirfunc {
-    (container: Container, isPlyaerInv: boolean, itemArray: ItemStack[]): void;
-}
-const putInZ = (container: Container, isPlyaerInv: boolean, itemArray: ItemStack[]) => {
-    for (let i = isPlyaerInv ? 9 : 0, j = 0; i < container.size; i++, j++) {
+type SortDirfunc = (container: Container, itemArray: ItemStack[], slots: boolean[]) => void;
+
+const putInZ: SortDirfunc = (container: Container, itemArray: ItemStack[], slots: boolean[]) => {
+    for (let i = 0, j = 0; i < slots.length; i++) {
+        if (slots[i] === false) continue;
         container.setItem(i, undefined);
         if (j < itemArray.length) {
-            container.setItem(i, itemArray[j]);
+            container.setItem(i, itemArray[j++]);
         }
     }
 };
-const putInN = (container: Container, isPlyaerInv: boolean, itemArray: ItemStack[]) => {
+const putInN: SortDirfunc = (container: Container, itemArray: ItemStack[], slots: boolean[]) => {
     const rows = Math.floor(container.size / 9);
+
     let c = 0;
     for (let i = 0; i < 9; i++) {
-        for (let j = isPlyaerInv ? 1 : 0; j < rows; j++) {
-            container.setItem(i + j * 9, undefined);
+        for (let row = 0; row < rows; row++) {
+            const idx = i + row * 9;
+            if (slots[idx] == false) continue;
+            container.setItem(idx, undefined);
             if (c < itemArray.length) {
-                container.setItem(i + j * 9, itemArray[c++]);
+                container.setItem(idx, itemArray[c++]);
             }
         }
     }

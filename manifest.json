@@ -4,7 +4,7 @@
         "description": "MCBE Auto Sorter",
         "name": "Sorter自动整理",
         "uuid": "30c36031-59ea-4892-9b09-4dfd33ef0fc9",
-        "version": [1, 2, 2],
+        "version": [1, 2, 3],
         "min_engine_version": [1, 21, 0]
     },
     "modules": [
@@ -20,11 +20,11 @@
     "dependencies": [
         {
             "module_name": "@minecraft/server",
-            "version": "2.3.0-beta"
+            "version": "beta"
         },
         {
             "module_name": "@minecraft/server-ui",
-            "version": "2.1.0-beta"
+            "version": "beta"
         }
     ]
 }

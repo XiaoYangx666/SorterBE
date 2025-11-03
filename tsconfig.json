@@ -17,7 +17,8 @@
         "rootDir": "src",
         "allowJs": true,
         "incremental": true,
-        "tsBuildInfoFile": "cache/tsbuildinfo.json"
+        "tsBuildInfoFile": "cache/tsbuildinfo.json",
+        "skipLibCheck": true
     },
     "include": ["./src"],
     "compileOnSave": false

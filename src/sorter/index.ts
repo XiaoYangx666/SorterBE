@@ -1,10 +1,9 @@
-import { Block, Container, ItemStack, Player, system, world } from "@minecraft/server";
-import { Command, pcommand } from "sapi-pro";
-import { formManager } from "sapi-pro";
+import { Block, BlockComponentTypes, Container, EntityComponentTypes, ItemLockMode, ItemStack, Player, system, world } from "@minecraft/server";
+import { Command, formManager, pcommand } from "sapi-pro";
+import { intervalBus } from "sapi-pro/scripts/Event.js";
 import { distance, getAllPlayers } from "sapi-pro/scripts/func.js";
 import { mes, sortDirs, sortMethods } from "./methods.js";
 import { sorter_auto, sorter_autoback, sorter_dir, sorter_method } from "./sorterUI.js";
-import { intervalBus } from "sapi-pro/scripts/Event.js";
 
 //自动整理黑名单
 const blackList = ["hopper", "furnace", "lit_furnace", "smoker", "lit_smoker", "blast_furnace", "lit_blast_furnace", "dropper", "dispenser", "brewing_stand"];
@@ -13,10 +12,18 @@ const blackList = ["hopper", "furnace", "lit_furnace", "smoker", "lit_smoker", "
 async function sortInventory(container: Container | undefined, isPlyaerInv: boolean = false, sortMethod: number = 0, sortDir: number = 0) {
     if (!container) return;
     let itemArray: ItemStack[] = [];
+    let availableSlots: boolean[] = new Array(container.size);
     for (let slot = 0; slot < container.size; slot++) {
         let item = container.getItem(slot);
-        if (!item || (isPlyaerInv && slot < 9)) continue;
-        itemArray.push(item);
+        availableSlots[slot] = false;
+        //是玩家物品栏则跳过
+        if (isPlyaerInv && slot < 9) continue;
+        //跳过被锁定物品
+        if (item?.lockMode === ItemLockMode.slot) continue;
+        availableSlots[slot] = true; //设置为可用栏位
+        if (item) {
+            itemArray.push(item);
+        }
     }
     try {
         //使用对应的排序方法
@@ -40,7 +47,7 @@ async function sortInventory(container: Container | undefined, isPlyaerInv: bool
             }
         }
         //调用对应的放置方法
-        Object.values(sortDirs)[sortDir](container, isPlyaerInv, result);
+        Object.values(sortDirs)[sortDir](container, result, availableSlots);
     } catch (e) {
         console.warn(`${e}`);
     }
@@ -53,17 +60,21 @@ function sortHandler(player: Player, params: any) {
     if (lasttime && Date.now() - lasttime <= 2000) {
         return mes(player, "请等待" + (2 - (Date.now() - lasttime) / 1000).toFixed(1) + "秒后再使用");
     }
+
     const block = player.getBlockFromViewDirection()?.block;
-    let inv = undefined;
-    const sortPlayer = isSortPlayer(player, block);
+    const sortPlayer = isPlayerSortTarget(player, block);
+
+    let inv: Container | undefined;
     if (sortPlayer) {
-        inv = player.getComponent("inventory")?.container;
+        inv = player.getComponent(EntityComponentTypes.Inventory)?.container;
     } else {
         const block1 = block as Block;
-        inv = block1.getComponent("minecraft:inventory")?.container;
+        inv = block1.getComponent(BlockComponentTypes.Inventory)?.container;
     }
+
     const sort_method = sorter_method.get(player) || 0;
     const sort_dir = sorter_dir.get(player) || 0;
+
     system.run(async () => {
         await sortInventory(inv, sortPlayer, sort_method, sort_dir);
         mes(player, sortPlayer ? "整理背包完成" : "整理完成");
@@ -71,12 +82,12 @@ function sortHandler(player: Player, params: any) {
     coolMap.set(player.id, Date.now());
 }
 
-function isSortPlayer(player: Player, block: Block | undefined) {
+function isPlayerSortTarget(player: Player, block: Block | undefined) {
     if (!block) return true;
     const dis = distance(player.location, block?.location);
     if (dis > 25) return true;
-    let inv = block?.getComponent("minecraft:inventory")?.container;
-    if (!inv || block.typeId.indexOf("furnace") != -1) return true;
+    const inv = block?.getComponent("minecraft:inventory")?.container;
+    if (!inv || block.typeId.includes("furnace")) return true;
     return false;
 }
 
