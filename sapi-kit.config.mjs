@@ -1,6 +1,4 @@
-import { defineSapiKitConfig } from "sapi-kit";
-
-export default defineSapiKitConfig({
+export default {
     //全局配置
     /**行为包根目录 */
     bpRoot: "./",
@@ -12,7 +10,7 @@ export default defineSapiKitConfig({
      *
      * tsconfig的outdir需要和此目录一致
      */
-    cacheDir: "cache",
+    cacheDir: "./cache",
     /**入口文件(入口文件相对缓存目录的名字) */
     entryPoint: "main.js",
     /** 是否每次构建前清空 scripts 目录（建议在打包异常时开启） */
@@ -38,11 +36,20 @@ export default defineSapiKitConfig({
      *
      * 如果有两个包，打包mcaddon，必须指定名字
      */
-    packageName: undefined,
+    packageName: "自动整理",
+    /**
+     *
+     * @param {string} name
+     * @param {[number,number,number]} version
+     * @returns
+     */
+    buildName(name, version) {
+        return name + "v" + version.join(",");
+    },
     /** 是否启用二次 zip 压缩（用于上传蓝奏云等平台） */
     enableExtraZip: true,
     /** 打包文件名中是否包含版本号（版本号从 manifest.json 中读取） */
     includeVersionInName: true,
     /** 是否使用逗号格式的版本号如 v1,x,x 以兼容某些玩家导入问题 */
     useCommaStyleVersion: true,
-});
+};

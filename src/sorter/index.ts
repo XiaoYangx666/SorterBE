@@ -1,100 +1,21 @@
-import { Block, BlockComponentTypes, Container, EntityComponentTypes, ItemLockMode, ItemStack, Player, system, world } from "@minecraft/server";
+import { EntityComponentTypes, world } from "@minecraft/server";
 import { Command, formManager, pcommand } from "sapi-pro";
-import { intervalBus } from "sapi-pro/scripts/Event.js";
-import { distance, getAllPlayers } from "sapi-pro/scripts/func.js";
-import { mes, sortDirs, sortMethods } from "./methods.js";
-import { sorter_auto, sorter_autoback, sorter_dir, sorter_method } from "./sorterUI.js";
+import { intervalBus } from "sapi-pro/scripts/Event";
+import { getAllPlayers } from "sapi-pro/scripts/func";
+import {
+	ContainerTypes,
+	entityWhiteList,
+	getBlockContainerType,
+	getEntityContainerType,
+	sortByPlayerSettings,
+} from "./sort";
+import { sortCmdHandler } from "./sortCommand";
+import { sorter_auto, sorter_autoback } from "./sorterUI";
 
-//自动整理黑名单
-const blackList = ["hopper", "furnace", "lit_furnace", "smoker", "lit_smoker", "blast_furnace", "lit_blast_furnace", "dropper", "dispenser", "brewing_stand"];
-
-// 整理函数
-async function sortInventory(container: Container | undefined, isPlyaerInv: boolean = false, sortMethod: number = 0, sortDir: number = 0) {
-    if (!container) return;
-    let itemArray: ItemStack[] = [];
-    let availableSlots: boolean[] = new Array(container.size);
-    for (let slot = 0; slot < container.size; slot++) {
-        let item = container.getItem(slot);
-        availableSlots[slot] = false;
-        //是玩家物品栏则跳过
-        if (isPlyaerInv && slot < 9) continue;
-        //跳过被锁定物品
-        if (item?.lockMode === ItemLockMode.slot) continue;
-        availableSlots[slot] = true; //设置为可用栏位
-        if (item) {
-            itemArray.push(item);
-        }
-    }
-    try {
-        //使用对应的排序方法
-        itemArray.sort(Object.values(sortMethods)[sortMethod]);
-        //合并
-        const result: ItemStack[] = [];
-        for (let i = 0; i < itemArray.length; i++) {
-            const topitem = result[result.length - 1];
-            const item = itemArray[i];
-            if (topitem && topitem.typeId == item.typeId && topitem.isStackableWith(item) && topitem.amount < topitem.maxAmount) {
-                //可以合并
-                if (topitem.amount + item.amount <= topitem.maxAmount) {
-                    topitem.amount += item.amount;
-                } else {
-                    item.amount = topitem.amount + item.amount - topitem.maxAmount;
-                    topitem.amount = topitem.maxAmount;
-                    result.push(item);
-                }
-            } else {
-                result.push(item);
-            }
-        }
-        //调用对应的放置方法
-        Object.values(sortDirs)[sortDir](container, result, availableSlots);
-    } catch (e) {
-        console.warn(`${e}`);
-    }
-}
-
-//整理指令
-const coolMap: Map<string, number> = new Map();
-function sortHandler(player: Player, params: any) {
-    const lasttime = coolMap.get(player.id);
-    if (lasttime && Date.now() - lasttime <= 2000) {
-        return mes(player, "请等待" + (2 - (Date.now() - lasttime) / 1000).toFixed(1) + "秒后再使用");
-    }
-
-    const block = player.getBlockFromViewDirection()?.block;
-    const sortPlayer = isPlayerSortTarget(player, block);
-
-    let inv: Container | undefined;
-    if (sortPlayer) {
-        inv = player.getComponent(EntityComponentTypes.Inventory)?.container;
-    } else {
-        const block1 = block as Block;
-        inv = block1.getComponent(BlockComponentTypes.Inventory)?.container;
-    }
-
-    const sort_method = sorter_method.get(player) || 0;
-    const sort_dir = sorter_dir.get(player) || 0;
-
-    system.run(async () => {
-        await sortInventory(inv, sortPlayer, sort_method, sort_dir);
-        mes(player, sortPlayer ? "整理背包完成" : "整理完成");
-    });
-    coolMap.set(player.id, Date.now());
-}
-
-function isPlayerSortTarget(player: Player, block: Block | undefined) {
-    if (!block) return true;
-    const dis = distance(player.location, block?.location);
-    if (dis > 25) return true;
-    const inv = block?.getComponent("minecraft:inventory")?.container;
-    if (!inv || block.typeId.includes("furnace")) return true;
-    return false;
-}
-
-//命令
-const sortShortCommand = new Command("r", "整理背包或容器", false, sortHandler);
-const sorter = new Command("sorter", "打开自动整理设置", false, (player, args) => {
-    formManager.openNamed(player, "sorter.main", {}, 5);
+//---命令---
+const sortShortCommand = new Command("r", "整理背包或容器", false, sortCmdHandler);
+const sorter = new Command("sorter", "打开自动整理设置", false, (player) => {
+	formManager.openNamed(player, "sorter.main", {}, 5);
 });
 
 pcommand.registerCommand(sortShortCommand);
@@ -102,29 +23,53 @@ pcommand.registerNative(sortShortCommand);
 pcommand.registerCommand(sorter);
 pcommand.registerNative(sorter);
 
-//自动整理订阅
+//---订阅---
+
+//自动整理方块黑名单
+const blockAutoSortBlackList = [
+	"hopper",
+	"furnace",
+	"lit_furnace",
+	"smoker",
+	"lit_smoker",
+	"blast_furnace",
+	"lit_blast_furnace",
+	"dropper",
+	"dispenser",
+	"brewing_stand",
+];
+//自动整理容器方块
 world.afterEvents.playerInteractWithBlock.subscribe((t) => {
-    let BlockContainer = t.block.getComponent("inventory")?.container;
-    if (!BlockContainer || blackList.indexOf(t.block.typeId.split(":")[1]) != -1) return;
-    const player = t.player;
-    if (sorter_auto.get(player) != 1) return;
-    const sort_method = sorter_method.get(player) || 0;
-    const sort_dir = sorter_dir.get(player) || 0;
-    system.run(async () => {
-        sortInventory(BlockContainer, false, sort_method, sort_dir);
-    });
-    coolMap.set(player.id, Date.now());
+	const BlockContainer = t.block.getComponent("inventory")?.container;
+	if (!BlockContainer || blockAutoSortBlackList.includes(t.block.typeId.split(":")[1])) return;
+
+	const player = t.player;
+	if (sorter_auto.get(player) !== 1) return;
+
+	const type = getBlockContainerType(t.block);
+	sortByPlayerSettings(BlockContainer, player, type);
 });
 
+//自动整理容器实体
+world.afterEvents.playerInteractWithEntity.subscribe((t) => {
+	const entityContainer = t.target.getComponent(EntityComponentTypes.Inventory)?.container;
+	const entityId = t.target.typeId.split(":")[1];
+	if (!entityContainer || !entityWhiteList.includes(entityId)) return;
+
+	const player = t.player;
+	if (sorter_auto.get(player) !== 1) return;
+
+	const type = getEntityContainerType(t.target);
+	sortByPlayerSettings(entityContainer, player, type);
+});
+
+//自动整理背包(每分钟)
 intervalBus.subscribemin(() => {
-    for (let player of getAllPlayers()) {
-        const autoback = sorter_autoback.get(player);
-        if (autoback) {
-            const sort_method = sorter_method.get(player) || 0;
-            const sort_dir = sorter_dir.get(player) || 0;
-            system.run(async () => {
-                sortInventory(player.getComponent("inventory")?.container, true, sort_method, sort_dir);
-            });
-        }
-    }
+	for (let player of getAllPlayers()) {
+		const autoback = sorter_autoback.get(player);
+		if (!autoback) continue;
+
+		const container = player.getComponent("inventory")?.container;
+		sortByPlayerSettings(container, player, ContainerTypes.player);
+	}
 });
