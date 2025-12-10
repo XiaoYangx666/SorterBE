@@ -1,6 +1,6 @@
 import { Block, Container, Entity, EntityComponentTypes, ItemLockMode, ItemStack, Player } from "@minecraft/server";
+import { sorter_dir, sorter_method } from "../db";
 import { sortDirs, sortMethods } from "./methods";
-import { sorter_dir, sorter_method } from "./sorterUI";
 
 export interface ContaienrTypeData {
 	minSlot: number;
@@ -21,10 +21,17 @@ export type ContainerTypes = keyof typeof ContainerTypes;
 export async function sortContainer(
 	container: Container | undefined,
 	type: ContaienrTypeData = ContainerTypes.common,
-	sortMethod: number = 0,
-	sortDir: number = 0
+	player: Player
 ) {
 	if (!container) return;
+	//获取玩家的整理配置
+	const sortMethod = sorter_method.get(player) ?? 0;
+	const sortDir = sorter_dir.get(player) ?? 0;
+	const funcBuilder = Object.values(sortMethods)[sortMethod];
+	if (!funcBuilder) {
+		return player.sendMessage("无法获取排序方法");
+	}
+	//构造物品数组和可用槽位数组
 	let itemArray: ItemStack[] = [];
 	let availableSlots: boolean[] = new Array(type.size ?? container.size);
 	for (let slot = type.minSlot; slot < container.size; slot++) {
@@ -39,7 +46,8 @@ export async function sortContainer(
 	}
 	try {
 		//使用对应的排序方法
-		itemArray.sort(Object.values(sortMethods)[sortMethod]);
+		const func = await funcBuilder(player);
+		itemArray.sort(func);
 		//合并
 		const result: ItemStack[] = [];
 		for (let i = 0; i < itemArray.length; i++) {
@@ -66,21 +74,11 @@ export async function sortContainer(
 		//调用对应的放置方法
 		Object.values(sortDirs)[sortDir](container, result, availableSlots, type);
 	} catch (e) {
+		if (e instanceof Error) {
+			player.sendMessage("整理错误: " + e.message);
+		}
 		console.error(e);
 	}
-}
-
-/**根据玩家配置进行整理 */
-export async function sortByPlayerSettings(
-	container: Container | undefined,
-	player: Player,
-	type: ContaienrTypeData
-): Promise<void> {
-	if (!container) return;
-	const sort_method = sorter_method.get(player) || 0;
-	const sort_dir = sorter_dir.get(player) || 0;
-
-	return sortContainer(container, type, sort_method, sort_dir);
 }
 
 //自动整理实体白名单
@@ -116,4 +114,8 @@ export function getBlockContainerType(block: Block) {
 		return ContainerTypes.hopper;
 	}
 	return ContainerTypes.common;
+}
+
+export function mes(player: Player, text: string) {
+	player.sendMessage("§2[一键整理]§r" + text);
 }

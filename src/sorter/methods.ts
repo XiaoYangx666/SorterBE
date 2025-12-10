@@ -1,20 +1,11 @@
-import { Container, ItemComponentTypes, ItemStack, Player, world } from "@minecraft/server";
-import { ids } from "./id";
+import { Container, ItemComponentTypes, ItemStack, Player } from "@minecraft/server";
+import { sorter_ordertable } from "../db";
+import { getOrderTableIdMap } from "../tables";
 import { ContaienrTypeData } from "./sort";
 
-const idMap: Record<string, number> = {};
-world.afterEvents.worldLoad.subscribe(() => {
-	for (let i = 0; i < ids.length; i++) {
-		idMap[ids[i]] = i;
-	}
-});
-
-export function mes(player: Player, text: string) {
-	player.sendMessage("§2[一键整理]§r" + text);
-}
-
+//---特殊比较方法---
 const cleanId = (id: string) => id.replace(/:(long_|strong_)+/, ":");
-//特殊比较方法
+//药水比较
 const comparePotion = (a: ItemStack, b: ItemStack) => {
 	const aPotion = a.getComponent(ItemComponentTypes.Potion);
 	const bPotion = b.getComponent(ItemComponentTypes.Potion);
@@ -41,28 +32,16 @@ const comparePotion = (a: ItemStack, b: ItemStack) => {
 	return 0;
 };
 
-//特殊比较方法
+//特殊比较方法记录(物品id，函数)
 export const Compares: Record<string, Function> = {
 	potion: comparePotion,
 };
 
-//通用比较方法
-interface Comparefunc {
-	(a: ItemStack, b: ItemStack): number;
-}
-export const compareByID = (a: ItemStack, b: ItemStack) => {
-	const aId = a.typeId.split(":")[1];
-	const bId = b.typeId.split(":")[1];
-	let first = idMap[aId] ?? 2000;
-	let second = idMap[bId] ?? 2000;
-	if (first == second) {
-		if (first == 2000) return compareByName(a, b);
-		if (Compares[aId]) return Compares[aId](a, b);
-	}
-	return first - second;
-};
+//---通用比较方法---
+type CompareFuncBuilder = (player: Player) => Promise<Comparefunc> | Comparefunc;
+export type Comparefunc = (a: ItemStack, b: ItemStack) => number;
 
-export const compareByName = (a: ItemStack, b: ItemStack) => {
+function compareByName(a: ItemStack, b: ItemStack) {
 	let first = a.nameTag || a.typeId;
 	let second = b.nameTag || b.typeId;
 	if (first > second) {
@@ -73,13 +52,30 @@ export const compareByName = (a: ItemStack, b: ItemStack) => {
 	} else {
 		return -1;
 	}
-};
-export const sortMethods: Record<string, Comparefunc> = {
-	"按ID表顺序整理(默认)": compareByID,
-	按字母顺序整理: compareByName,
+}
+
+async function buildIdCompareFunc(player: Player) {
+	const tableId = sorter_ordertable.get(player) ?? 0;
+	const idMap = await getOrderTableIdMap(tableId);
+	return (a: ItemStack, b: ItemStack) => {
+		const aId = a.typeId.split(":")[1];
+		const bId = b.typeId.split(":")[1];
+		let first = idMap.get(aId) ?? 3000;
+		let second = idMap.get(bId) ?? 3000;
+		if (first == second) {
+			if (first == 3000) return compareByName(a, b);
+			if (Compares[aId]) return Compares[aId](a, b);
+		}
+		return first - second;
+	};
+}
+
+export const sortMethods: Record<string, CompareFuncBuilder> = {
+	"按ID表顺序整理(默认)": buildIdCompareFunc,
+	按字母顺序整理: () => compareByName,
 };
 
-//整理方向
+//---整理方向---
 type SortDirfunc = (container: Container, itemArray: ItemStack[], slots: boolean[], type: ContaienrTypeData) => void;
 
 const putInZ: SortDirfunc = (container, itemArray, slots, type) => {

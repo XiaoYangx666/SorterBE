@@ -1,13 +1,13 @@
 import { BlockComponentTypes, Container, EntityComponentTypes, Player, system } from "@minecraft/server";
 import { distance } from "sapi-pro/scripts/func";
-import { mes } from "./methods";
 import {
 	ContaienrTypeData,
 	ContainerTypes,
 	entityWhiteList,
 	getBlockContainerType,
 	getEntityContainerType,
-	sortByPlayerSettings,
+	mes,
+	sortContainer,
 } from "./sort";
 
 //整理命令部分
@@ -17,7 +17,7 @@ export function sortCmdHandler(player: Player) {
 
 	system.run(async () => {
 		const start = Date.now();
-		await sortByPlayerSettings(target.container, player, target.type);
+		await sortContainer(target.container, target.type, player);
 		const end = Date.now();
 		const time = end - start;
 		mes(player, `整理${target.dis === -1 ? "背包" : ""}完成§7(${time == 0 ? "<1" : time}ms) `);
