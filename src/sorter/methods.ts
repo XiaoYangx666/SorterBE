@@ -1,45 +1,18 @@
-import { Container, ItemComponentTypes, ItemStack, Player } from "@minecraft/server";
-import { sorter_ordertable } from "../db";
+import { Container, ItemStack, Player } from "@minecraft/server";
+import { sorter_ordertable } from "../config";
 import { getOrderTableIdMap } from "../tables";
+import { compareMap } from "./compare";
 import { ContaienrTypeData } from "./sort";
-
-//---特殊比较方法---
-const cleanId = (id: string) => id.replace(/:(long_|strong_)+/, ":");
-//药水比较
-const comparePotion = (a: ItemStack, b: ItemStack) => {
-	const aPotion = a.getComponent(ItemComponentTypes.Potion);
-	const bPotion = b.getComponent(ItemComponentTypes.Potion);
-	if (!aPotion || !bPotion) return 0;
-
-	const aId = cleanId(aPotion.potionEffectType.id);
-	const bId = cleanId(bPotion.potionEffectType.id);
-	if (aId !== bId) return aId > bId ? 1 : -1;
-
-	// 比较投递方式
-	if (aPotion.potionDeliveryType.id !== bPotion.potionDeliveryType.id) {
-		return aPotion.potionDeliveryType.id > bPotion.potionDeliveryType.id ? 1 : -1;
-	}
-
-	// 同种类 + 同 deliveryType → 比较效果
-	const aTicks = aPotion.potionEffectType.durationTicks ?? 0;
-	const bTicks = bPotion.potionEffectType.durationTicks ?? 0;
-	const aStrong = aPotion.potionEffectType.id.includes("strong");
-	const bStrong = bPotion.potionEffectType.id.includes("strong");
-
-	if (aStrong !== bStrong) return aStrong ? 1 : -1;
-	if (aTicks !== bTicks) return aTicks > bTicks ? 1 : -1;
-
-	return 0;
-};
-
-//特殊比较方法记录(物品id，函数)
-export const Compares: Record<string, Function> = {
-	potion: comparePotion,
-};
+import { LangText } from "sapi-pro";
+import { UILang } from "../lang";
 
 //---通用比较方法---
-type CompareFuncBuilder = (player: Player) => Promise<Comparefunc> | Comparefunc;
-export type Comparefunc = (a: ItemStack, b: ItemStack) => number;
+type CompareFuncBuilder = (player: Player) => Promise<CompareFunc> | CompareFunc;
+interface CompareMethod {
+	name: LangText;
+	func: CompareFuncBuilder;
+}
+export type CompareFunc = (a: ItemStack, b: ItemStack) => number;
 
 function compareByName(a: ItemStack, b: ItemStack) {
 	let first = a.nameTag || a.typeId;
@@ -47,7 +20,9 @@ function compareByName(a: ItemStack, b: ItemStack) {
 	if (first > second) {
 		return 1;
 	} else if (first == second) {
-		if (Compares[first.split(":")[1]]) return Compares[first.split(":")[1]](a, b);
+		//尝试特殊比较
+		const compareFunc = compareMap[first.split(":")[1]];
+		if (compareFunc) return compareFunc(a, b);
 		return 0;
 	} else {
 		return -1;
@@ -64,19 +39,28 @@ async function buildIdCompareFunc(player: Player) {
 		let second = idMap.get(bId) ?? 3000;
 		if (first == second) {
 			if (first == 3000) return compareByName(a, b);
-			if (Compares[aId]) return Compares[aId](a, b);
+			if (compareMap[aId]) return compareMap[aId](a, b);
 		}
 		return first - second;
 	};
 }
 
-export const sortMethods: Record<string, CompareFuncBuilder> = {
-	"按ID表顺序整理(默认)": buildIdCompareFunc,
-	按字母顺序整理: () => compareByName,
-};
+export const sortMethods: CompareMethod[] = [
+	{ name: UILang.method.byTable, func: buildIdCompareFunc },
+	{ name: UILang.method.byName, func: () => compareByName },
+];
 
 //---整理方向---
-type SortDirfunc = (container: Container, itemArray: ItemStack[], slots: boolean[], type: ContaienrTypeData) => void;
+interface SortDir {
+	name: string;
+	func: SortDirfunc;
+}
+type SortDirfunc = (
+	container: Container,
+	itemArray: ItemStack[],
+	slots: boolean[],
+	type: ContaienrTypeData
+) => void;
 
 const putInZ: SortDirfunc = (container, itemArray, slots, type) => {
 	const min = type.minSlot;
@@ -109,4 +93,7 @@ const putInN: SortDirfunc = (container, itemArray, slots, type) => {
 };
 //0 1 2 3 4
 //  5 6 7 8
-export const sortDirs: Record<string, SortDirfunc> = { Z字形: putInZ, N字形: putInN };
+export const sortDirs: SortDir[] = [
+	{ name: "Z", func: putInZ },
+	{ name: "N", func: putInN },
+];

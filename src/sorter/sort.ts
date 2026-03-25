@@ -1,6 +1,18 @@
-import { Block, Container, Entity, EntityComponentTypes, ItemLockMode, ItemStack, Player } from "@minecraft/server";
-import { sorter_dir, sorter_method } from "../db";
+import {
+	Block,
+	Container,
+	Entity,
+	EntityComponentTypes,
+	ItemLockMode,
+	ItemStack,
+	Player,
+} from "@minecraft/server";
+import { globalConfig, sorter_dir, sorter_method } from "../config";
 import { sortDirs, sortMethods } from "./methods";
+import { logger } from "../ext";
+import { LangText, translator } from "sapi-pro";
+import { MessageLang } from "../lang";
+import { BundleIds, ShulkerBoxIds } from "../constants";
 
 export interface ContaienrTypeData {
 	minSlot: number;
@@ -25,28 +37,42 @@ export async function sortContainer(
 ) {
 	if (!container) return;
 	//获取玩家的整理配置
-	const sortMethod = sorter_method.get(player) ?? 0;
-	const sortDir = sorter_dir.get(player) ?? 0;
-	const funcBuilder = Object.values(sortMethods)[sortMethod];
-	if (!funcBuilder) {
+	const methodIdx = sorter_method.get(player) ?? 0;
+	const dirIdx = sorter_dir.get(player) ?? 0;
+
+	const method = sortMethods[methodIdx];
+	if (!method) {
 		return player.sendMessage("无法获取排序方法");
 	}
 	//构造物品数组和可用槽位数组
 	let itemArray: ItemStack[] = [];
 	let availableSlots: boolean[] = new Array(type.size ?? container.size);
+
 	for (let slot = type.minSlot; slot < container.size; slot++) {
 		let item = container.getItem(slot);
 		availableSlots[slot] = false;
-		//跳过被锁定物品
-		if (item?.lockMode === ItemLockMode.slot) continue;
-		availableSlots[slot] = true; //设置为可用栏位
 		if (item) {
+			//跳过被锁定物品
+			if (item.lockMode === ItemLockMode.slot) continue;
+			//跳过潜影盒
+			if (globalConfig.skipShulkerBox && ShulkerBoxIds.has(item.typeId)) {
+				continue;
+			}
+			//跳过收纳袋
+			if (globalConfig.skipBundle && BundleIds.has(item?.typeId)) {
+				continue;
+			}
+
+			//未跳过，则添加到物品数组
 			itemArray.push(item);
 		}
+		//设置为可用栏位
+		availableSlots[slot] = true;
 	}
+
 	try {
 		//使用对应的排序方法
-		const func = await funcBuilder(player);
+		const func = await method.func(player);
 		itemArray.sort(func);
 		//合并
 		const result: ItemStack[] = [];
@@ -72,12 +98,13 @@ export async function sortContainer(
 			}
 		}
 		//调用对应的放置方法
-		Object.values(sortDirs)[sortDir](container, result, availableSlots, type);
+		sortDirs[dirIdx].func(container, result, availableSlots, type);
 	} catch (e) {
 		if (e instanceof Error) {
-			player.sendMessage("整理错误: " + e.message);
+			const t = translator.createFor(player);
+			player.sendMessage(t("整理错误: ", MessageLang.sortError) + e.message);
 		}
-		console.error(e);
+		logger.error("整理出错", e);
 	}
 }
 
@@ -116,6 +143,11 @@ export function getBlockContainerType(block: Block) {
 	return ContainerTypes.common;
 }
 
-export function mes(player: Player, text: string) {
-	player.sendMessage("§2[一键整理]§r" + text);
+export function mes(
+	player: Player,
+	text: LangText,
+	params?: Record<string, string | number | LangText>
+) {
+	const t = translator.createPureFor(player);
+	player.sendMessage((t(MessageLang.prefix) as string) + t(text, params));
 }

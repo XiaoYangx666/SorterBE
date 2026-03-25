@@ -1,5 +1,11 @@
-import { BlockComponentTypes, Container, EntityComponentTypes, Player, system } from "@minecraft/server";
-import { distance } from "sapi-pro/scripts/func";
+import {
+	BlockComponentTypes,
+	Container,
+	EntityComponentTypes,
+	Player,
+	system,
+} from "@minecraft/server";
+import { Vector3Utils } from "sapi-pro";
 import {
 	ContaienrTypeData,
 	ContainerTypes,
@@ -9,6 +15,7 @@ import {
 	mes,
 	sortContainer,
 } from "./sort";
+import { MessageLang } from "../lang";
 
 //整理命令部分
 export function sortCmdHandler(player: Player) {
@@ -20,7 +27,10 @@ export function sortCmdHandler(player: Player) {
 		await sortContainer(target.container, target.type, player);
 		const end = Date.now();
 		const time = end - start;
-		mes(player, `整理${target.dis === -1 ? "背包" : ""}完成§7(${time == 0 ? "<1" : time}ms) `);
+		mes(player, MessageLang.sortSuccess, {
+			target: target.dis === -1 ? MessageLang.backPack : "",
+			time: time == 0 ? "<1" : time,
+		});
 	});
 }
 
@@ -35,14 +45,16 @@ function getSortTarget(player: Player): sortTargetData | undefined {
 	const entity = getSortableEntity(player);
 
 	// 两者都存在时取距离较小的
-	const target = block && entity ? (block.dis < entity.dis ? block : entity) : block ?? entity;
+	const target = block && entity ? (block.dis < entity.dis ? block : entity) : (block ?? entity);
 
 	if (target) return target;
 
 	// 退化到玩家背包
 	const playerContainer = player.getComponent(EntityComponentTypes.Inventory)?.container;
 
-	return playerContainer ? { container: playerContainer, dis: -1, type: ContainerTypes.player } : undefined;
+	return playerContainer
+		? { container: playerContainer, dis: -1, type: ContainerTypes.player }
+		: undefined;
 }
 
 function getSortableBlock(player: Player): sortTargetData | undefined {
@@ -58,7 +70,7 @@ function getSortableBlock(player: Player): sortTargetData | undefined {
 
 	return {
 		container: container,
-		dis: distance(player.location, block.location),
+		dis: Vector3Utils.distance(player.location, block.location),
 		type: getBlockContainerType(block),
 	};
 }

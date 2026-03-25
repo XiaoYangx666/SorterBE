@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8" />
@@ -68,7 +68,8 @@
 			>
 				<div class="flex items-center space-x-3">
 					<h1 class="text-lg font-bold text-gray-800">
-						MC 物品分类器 <span class="text-[10px] text-purple-600 font-normal">v4.0 Pro</span>
+						MC 物品分类器
+						<span class="text-[10px] text-purple-600 font-normal">v4.0 Pro</span>
 					</h1>
 
 					<div class="relative group">
@@ -88,21 +89,26 @@
 				</div>
 
 				<!-- 统计信息 -->
-				<div class="flex items-center space-x-4 bg-gray-50 px-3 py-1 rounded-full border border-gray-200">
+				<div
+					class="flex items-center space-x-4 bg-gray-50 px-3 py-1 rounded-full border border-gray-200"
+				>
 					<div class="flex flex-col items-center leading-none">
 						<span class="text-[10px] text-gray-400">覆盖率</span>
 						<span
 							class="font-bold"
 							:class="uniqueCoverage === dictCount && dictCount > 0 ? 'text-green-600' : 'text-orange-600'"
 						>
-							{{ uniqueCoverage }} <span class="text-gray-400 font-normal">/ {{ dictCount }}</span>
+							{{ uniqueCoverage }}
+							<span class="text-gray-400 font-normal">/ {{ dictCount }}</span>
 						</span>
 					</div>
 				</div>
 
 				<div class="flex items-center space-x-2">
 					<div class="relative group">
-						<button class="px-2 py-1 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 text-xs">
+						<button
+							class="px-2 py-1 bg-gray-50 border border-gray-300 rounded hover:bg-gray-100 text-xs"
+						>
 							📥 导入
 						</button>
 						<input
@@ -144,7 +150,9 @@
 			<!-- 主体内容 -->
 			<main class="flex-1 flex overflow-hidden">
 				<!-- 左侧：物品源 -->
-				<aside class="w-1/4 min-w-[280px] max-w-[400px] bg-white border-r border-gray-200 flex flex-col z-0">
+				<aside
+					class="w-1/4 min-w-[280px] max-w-[400px] bg-white border-r border-gray-200 flex flex-col z-0"
+				>
 					<div class="p-2 border-b bg-gray-50">
 						<input
 							v-model="searchQuery"
@@ -154,7 +162,8 @@
 						/>
 						<div class="mt-1 flex justify-between text-[10px] text-gray-400 px-1">
 							<span
-								>只显示未分类: <input type="checkbox" v-model="hideUsedItems" class="align-middle"
+								>只显示未分类:
+								<input type="checkbox" v-model="hideUsedItems" class="align-middle"
 							/></span>
 						</div>
 					</div>
@@ -185,22 +194,31 @@
 										IMG
 									</div>
 									<div class="flex-1 overflow-hidden">
-										<div class="font-medium truncate text-xs">{{ element.name }}</div>
-										<div class="text-[10px] text-gray-400 truncate font-mono">{{ element.id }}</div>
+										<div class="font-medium truncate text-xs">
+											{{ element.name }}
+										</div>
+										<div class="text-[10px] text-gray-400 truncate font-mono">
+											{{ element.id }}
+										</div>
 									</div>
 								</div>
 							</template>
 						</draggable>
-						<div v-if="filteredSourceItems.length === 0" class="text-center text-gray-400 mt-10 text-xs">
-							{{ Object.keys(itemDict).length ? (hideUsedItems ? '未分类物品已空' : '无搜索结果') :
-							'请先加载字典' }}
+						<div
+							v-if="filteredSourceItems.length === 0"
+							class="text-center text-gray-400 mt-10 text-xs"
+						>
+							{{ Object.keys(itemDict).length ? (hideUsedItems ? '未分类物品已空' :
+							'无搜索结果') : '请先加载字典' }}
 						</div>
 					</div>
 				</aside>
 
 				<!-- 右侧：分类树 -->
 				<section class="flex-1 bg-gray-50 flex flex-col min-w-0">
-					<div class="p-2 border-b bg-white flex justify-between items-center shadow-sm z-10">
+					<div
+						class="p-2 border-b bg-white flex justify-between items-center shadow-sm z-10"
+					>
 						<div class="flex items-center gap-2">
 							<h2 class="font-bold text-gray-700">分类结构</h2>
 							<div class="flex bg-gray-100 rounded text-xs">
@@ -210,7 +228,10 @@
 								>
 									▼ 展开
 								</button>
-								<button @click="toggleAll(true)" class="px-2 py-0.5 hover:bg-gray-200 rounded-r">
+								<button
+									@click="toggleAll(true)"
+									class="px-2 py-0.5 hover:bg-gray-200 rounded-r"
+								>
 									▶ 收起
 								</button>
 							</div>
@@ -225,7 +246,10 @@
 
 					<div class="flex-1 overflow-y-auto p-4 custom-scroll" ref="treeContainer">
 						<!-- 根节点入口 -->
-						<nested-draggable :list="treeData" class="space-y-2 min-h-[200px] pb-20"></nested-draggable>
+						<nested-draggable
+							:list="treeData"
+							class="space-y-2 min-h-[200px] pb-20"
+						></nested-draggable>
 					</div>
 				</section>
 			</main>
@@ -458,7 +482,8 @@
 								highlightedUuid.value = targetUuid;
 								// 1.5秒后移除高亮
 								setTimeout(() => {
-									if (highlightedUuid.value === targetUuid) highlightedUuid.value = null;
+									if (highlightedUuid.value === targetUuid)
+										highlightedUuid.value = null;
 								}, 1500);
 							}
 						}
@@ -486,7 +511,10 @@
 							try {
 								const jsonStr = stripComments(e.target.result);
 								const data = JSON.parse(jsonStr);
-								const merged = { ...(data.enums?.block || {}), ...(data.enums?.item || {}) };
+								const merged = {
+									...(data.enums?.block || {}),
+									...(data.enums?.item || {}),
+								};
 								for (const key in itemDict) delete itemDict[key];
 								Object.assign(itemDict, merged);
 							} catch (err) {
@@ -505,7 +533,11 @@
 						for (const [id, name] of Object.entries(itemDict)) {
 							if (count > 50 && !query) break;
 							if (hideUsedItems.value && usedIds.value.has(id)) continue;
-							if (!query || id.toLowerCase().includes(query) || name.includes(query)) {
+							if (
+								!query ||
+								id.toLowerCase().includes(query) ||
+								name.includes(query)
+							) {
 								result.push({ id, name });
 								count++;
 							}
@@ -531,7 +563,8 @@
 					const clearAll = () => {
 						if (confirm("确定清空吗？")) treeData.value = [];
 					};
-					const stripComments = (str) => str.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, "$1");
+					const stripComments = (str) =>
+						str.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, "$1");
 
 					// 导出导入逻辑 (保持不变，略微压缩)
 					const download = (c, n, t) => {
@@ -541,7 +574,11 @@
 						a.click();
 					};
 					const exportProjectJson = () =>
-						download(JSON.stringify(treeData.value, null, 2), "project.json", "application/json");
+						download(
+							JSON.stringify(treeData.value, null, 2),
+							"project.json",
+							"application/json"
+						);
 					const exportIds = () => {
 						const ids = [];
 						const t = (n) => {

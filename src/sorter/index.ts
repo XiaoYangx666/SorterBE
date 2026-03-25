@@ -1,15 +1,20 @@
-import { EntityComponentTypes, world } from "@minecraft/server";
-import { Command, formManager, pcommand } from "sapi-pro";
-import { intervalBus } from "sapi-pro/scripts/Event";
-import { getAllPlayers } from "sapi-pro/scripts/func";
-import { sorter_auto, sorter_autoback } from "../db";
-import { ContainerTypes, entityWhiteList, getBlockContainerType, getEntityContainerType, sortContainer } from "./sort";
+import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
+import { Command, formManager, pcommand, translator } from "sapi-pro";
+import { sorter_auto } from "../config";
+import { CmdLang, MessageLang } from "../lang";
+import { SorterScheduler } from "./scheduler";
+import {
+	entityWhiteList,
+	getBlockContainerType,
+	getEntityContainerType,
+	sortContainer,
+} from "./sort";
 import { sortCmdHandler } from "./sortCommand";
-import { sorterUI } from "./sorterUI";
+import { sorterMenu } from "./sorterUI";
 
 //---命令---
-const sortShortCommand = new Command("r", "整理背包或容器", false, sortCmdHandler);
-const sorter = new Command("sorter", "打开自动整理设置", false, (player) => {
+const sortShortCommand = new Command("r", translator.translate(CmdLang.r), false, sortCmdHandler);
+const sorter = new Command("sorter", translator.translate(CmdLang.sorter), false, (player) => {
 	formManager.openNamed(player, "sorter.main", {}, 5);
 });
 
@@ -17,7 +22,7 @@ pcommand.registerNative(sortShortCommand);
 pcommand.registerNative(sorter);
 
 //---表单---
-formManager.registerNamed("sorter.main", sorterUI);
+formManager.registerNamed("sorter.main", sorterMenu);
 
 //---订阅---
 
@@ -36,11 +41,13 @@ const blockAutoSortBlackList = [
 ];
 //自动整理容器方块
 world.afterEvents.playerInteractWithBlock.subscribe((t) => {
+	const player = t.player;
+	if (!player) return;
+	if (sorter_auto.get(player) !== 1) return;
+
+	//获取方块容器
 	const BlockContainer = t.block.getComponent("inventory")?.container;
 	if (!BlockContainer || blockAutoSortBlackList.includes(t.block.typeId.split(":")[1])) return;
-
-	const player = t.player;
-	if (sorter_auto.get(player) !== 1) return;
 
 	const type = getBlockContainerType(t.block);
 	sortContainer(BlockContainer, type, player);
@@ -48,24 +55,43 @@ world.afterEvents.playerInteractWithBlock.subscribe((t) => {
 
 //自动整理容器实体
 world.afterEvents.playerInteractWithEntity.subscribe((t) => {
+	const player = t.player;
+	if (!player) return;
+	if (sorter_auto.get(player) !== 1) return;
+
+	//获取实体容器
+	if (!t.target.isValid) return;
 	const entityContainer = t.target.getComponent(EntityComponentTypes.Inventory)?.container;
 	const entityId = t.target.typeId.split(":")[1];
 	if (!entityContainer || !entityWhiteList.includes(entityId)) return;
-
-	const player = t.player;
-	if (sorter_auto.get(player) !== 1) return;
 
 	const type = getEntityContainerType(t.target);
 	sortContainer(entityContainer, type, player);
 });
 
-//自动整理背包(每分钟)
-intervalBus.subscribemin(() => {
-	for (let player of getAllPlayers()) {
-		const autoback = sorter_autoback.get(player);
-		if (!autoback) continue;
+//自动整理背包调度器
+export const scheduler = new SorterScheduler();
+scheduler.start();
 
-		const container = player.getComponent("inventory")?.container;
-		sortContainer(container, ContainerTypes.player, player);
+//玩家进入消息推送
+world.afterEvents.playerSpawn.subscribe((e) => {
+	if (e.player == undefined || !e.initialSpawn) {
+		return;
+	}
+	const player = e.player;
+	const t = translator.createFor(player);
+	player.sendMessage(t("§2[自动整理] 插件加载成功", MessageLang.playerSpawn.loaded));
+	player.sendMessage(t("§f§l使用 §e/sorter §f§l打开菜单", MessageLang.playerSpawn.openMsg));
+});
+
+//背包物品变更订阅
+world.afterEvents.playerInventoryItemChange.subscribe((t) => {
+	if (!t.player || t.itemStack != undefined) return;
+	if (t.inventoryType != PlayerInventoryType.Inventory) return;
+
+	const item = t.player.getComponent(EntityComponentTypes.CursorInventory)?.item;
+	if (item) {
+		//玩家操作了
+		scheduler.onPlayerAction(t.player);
 	}
 });

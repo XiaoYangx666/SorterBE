@@ -1,12 +1,14 @@
 import { world } from "@minecraft/server";
-import { getAllPlayers } from "sapi-pro/scripts/func";
-import { sorter_ordertable } from "../db";
+import { getAllPlayers } from "sapi-pro/func";
+import { sorter_ordertable } from "../config";
+import { LangText } from "sapi-pro";
+import { UILang } from "../lang";
 
 interface orderTable {
-	name: string;
+	name: LangText;
 	buildMap: () => Promise<Map<string, number>>;
 	idMap?: Map<string, number>;
-	description: string;
+	description: LangText;
 }
 
 function buildMap(ids: string[]) {
@@ -19,16 +21,16 @@ function buildMap(ids: string[]) {
 
 export const orderTables: orderTable[] = [
 	{
-		name: "物品发布顺序表",
-		description: "根据物品的发布版本为排序依据，出现早的物品更靠前",
+		name: UILang.table.time,
+		description: UILang.table.time_desc,
 		buildMap: async () => {
 			const ids = (await import("./default")).ids;
 			return buildMap(ids);
 		},
 	},
 	{
-		name: "物品分类顺序表",
-		description: "根据物品作用分类后的id表，如武器和装备、工具、食物、作物",
+		name: UILang.table.group,
+		description: UILang.table.group_desc,
 		buildMap: async () => {
 			const ids = (await import("./categorized")).ids;
 			return buildMap(ids);
