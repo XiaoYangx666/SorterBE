@@ -7,12 +7,12 @@ import {
 	ItemStack,
 	Player,
 } from "@minecraft/server";
-import { globalConfig, sorter_dir, sorter_method } from "../config";
-import { sortDirs, sortMethods } from "./methods";
-import { logger } from "../ext";
 import { LangText, translator } from "sapi-pro";
-import { MessageLang } from "../lang";
+import { globalConfig, sorter_dir, sorter_method } from "../config";
 import { BundleIds, ShulkerBoxIds } from "../constants";
+import { logger } from "../ext";
+import { MessageLang } from "../lang";
+import { sortDirs, sortMethods } from "./methods";
 
 export interface ContaienrTypeData {
 	minSlot: number;

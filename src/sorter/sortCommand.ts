@@ -6,6 +6,7 @@ import {
 	system,
 } from "@minecraft/server";
 import { Vector3Utils } from "sapi-pro";
+import { MessageLang } from "../lang";
 import {
 	ContaienrTypeData,
 	ContainerTypes,
@@ -15,7 +16,6 @@ import {
 	mes,
 	sortContainer,
 } from "./sort";
-import { MessageLang } from "../lang";
 
 //整理命令部分
 export function sortCmdHandler(player: Player) {

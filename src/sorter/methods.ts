@@ -1,10 +1,10 @@
 import { Container, ItemStack, Player } from "@minecraft/server";
+import { LangText } from "sapi-pro";
 import { sorter_ordertable } from "../config";
+import { UILang } from "../lang";
 import { getOrderTableIdMap } from "../tables";
 import { compareMap } from "./compare";
 import { ContaienrTypeData } from "./sort";
-import { LangText } from "sapi-pro";
-import { UILang } from "../lang";
 
 //---通用比较方法---
 type CompareFuncBuilder = (player: Player) => Promise<CompareFunc> | CompareFunc;

@@ -1,4 +1,4 @@
-import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
+import { EntityComponentTypes, PlayerInventoryType, system, world } from "@minecraft/server";
 import { Command, formManager, pcommand, translator } from "sapi-pro";
 import { sorter_auto } from "../config";
 import { CmdLang, MessageLang } from "../lang";
@@ -86,9 +86,11 @@ world.afterEvents.playerSpawn.subscribe((e) => {
 
 //背包物品变更订阅
 world.afterEvents.playerInventoryItemChange.subscribe((t) => {
-	if (!t.player || t.itemStack != undefined) return;
+	if (!t.player) return;
 	if (t.inventoryType != PlayerInventoryType.Inventory) return;
+	scheduler.onPlayerInvChange(t.player, t.beforeItemStack, t.itemStack);
 
+	//cursor判据
 	const item = t.player.getComponent(EntityComponentTypes.CursorInventory)?.item;
 	if (item) {
 		//玩家操作了

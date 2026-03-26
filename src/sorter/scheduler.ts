@@ -1,14 +1,17 @@
-import { EntityComponentTypes, Player } from "@minecraft/server";
+import { EntityComponentTypes, ItemStack, Player, system, world } from "@minecraft/server";
 import { intervalBus } from "sapi-pro/Event";
 import { getAllPlayers, getPlayerById } from "sapi-pro/func";
 import { globalConfig, sorter_autoback } from "../config";
 import { ContainerTypes, sortContainer } from "./sort";
 
 export class SorterScheduler {
-	// 存储下一次整理的时间戳 (秒)
-	private readonly nextSortTickMap: Map<string, number> = new Map();
-	// 存储最后一次手动操作的时间戳 (秒)
-	private readonly lastActionTickMap: Map<string, number> = new Map();
+	// 存储下一次整理的时间戳 (ms)
+	private readonly nextSortTimeMap: Map<string, number> = new Map();
+	// 存储最后一次手动操作的时间戳 (ms)
+	private readonly lastActionTimeMap: Map<string, number> = new Map();
+	// 存储最后一次物品改变
+	private readonly lastItemMap: Map<string, { item: string | undefined; tick: number }> =
+		new Map();
 
 	constructor() {}
 
@@ -25,17 +28,23 @@ export class SorterScheduler {
 		const onlineIds = new Set(onlinePlayers.map((p) => p.id));
 
 		// 遍历 nextSortTickMap 的所有 Key
-		for (const id of this.nextSortTickMap.keys()) {
+		for (const id of this.nextSortTimeMap.keys()) {
 			if (!onlineIds.has(id)) {
-				this.nextSortTickMap.delete(id);
-				this.lastActionTickMap.delete(id);
+				this.nextSortTimeMap.delete(id);
+				this.lastActionTimeMap.delete(id);
 			}
 		}
 
-		// 同样检查 lastActionTickMap (虽然通常两者同步，但为了保险)
-		for (const id of this.lastActionTickMap.keys()) {
+		for (const id of this.lastItemMap.keys()) {
 			if (!onlineIds.has(id)) {
-				this.lastActionTickMap.delete(id);
+				this.lastItemMap.delete(id);
+			}
+		}
+
+		// 同样检查 lastActionTickMap
+		for (const id of this.lastActionTimeMap.keys()) {
+			if (!onlineIds.has(id)) {
+				this.lastActionTimeMap.delete(id);
 			}
 		}
 	}
@@ -49,21 +58,22 @@ export class SorterScheduler {
 			// 检查自动整理开关
 			const autoback = sorter_autoback.get(p);
 			if (!autoback) {
-				this.nextSortTickMap.delete(p.id);
+				this.nextSortTimeMap.delete(p.id);
 				return;
 			}
 
-			let nextTime = this.nextSortTickMap.get(p.id);
+			let nextTime = this.nextSortTimeMap.get(p.id);
 
 			// 如果没有预定时间，则初始化一个
 			if (!nextTime) {
 				this.scheduleNext(p.id, cursec);
 				return;
 			}
+			// world.sendMessage(`${cursec} ${nextTime} - ${nextTime - cursec}`);
 
 			// 到达预定时间，尝试执行整理
 			if (cursec >= nextTime) {
-				this.tryRunSort(p, cursec);
+				this.tryRunSort(p, nextTime);
 			}
 		});
 	}
@@ -82,9 +92,10 @@ export class SorterScheduler {
 		}
 
 		// B. 冷却检查：距离最后一次手动操作必须超过 cooldown 秒
-		const lastAction = this.lastActionTickMap.get(player.id) || 0;
-		const cooldown = config.actionCooldown * 1000 || 5000;
-		if (cursec - lastAction < cooldown) {
+		const lastAction = this.lastActionTimeMap.get(player.id) || 0;
+		const cooldown = config.actionCooldown || 5;
+		// world.sendMessage(`${lastAction} ${cursec} ${cursec - lastAction} ${cooldown * 1000}`);
+		if (cursec - lastAction < cooldown * 1000) {
 			// 如果还没冷却是不能整理的，继续推迟
 			this.postpone(player.id, cursec, cooldown);
 			return;
@@ -95,7 +106,7 @@ export class SorterScheduler {
 		if (container) {
 			sortContainer(container, ContainerTypes.player, player);
 		}
-		player.sendMessage("整理");
+		// player.sendMessage("整理");
 
 		// D. 规划下一次长周期整理
 		this.scheduleNext(player.id, cursec);
@@ -105,21 +116,39 @@ export class SorterScheduler {
 	 * 外部接口：当玩家手动操作背包时调用
 	 */
 	public onPlayerAction(player: Player) {
-		player.sendMessage("操作");
+		// player.sendMessage("操作");
 		const cursec = Date.now();
-		this.lastActionTickMap.set(player.id, cursec);
+		this.lastActionTimeMap.set(player.id, cursec);
+	}
+
+	public onPlayerInvChange(player: Player, before?: ItemStack, item?: ItemStack) {
+		if (before == undefined && item == undefined) return;
+
+		const tick = system.currentTick;
+		const record = this.lastItemMap.get(player.id);
+
+		if (record?.tick == tick) {
+			if (item == undefined && before!.typeId == record.item) {
+				this.onPlayerAction(player);
+			}
+			if (item != undefined && record.item == undefined) {
+				this.onPlayerAction(player);
+			}
+		} else {
+			this.lastItemMap.set(player.id, { item: item?.typeId, tick: tick });
+		}
 	}
 
 	/** 设置下一次常规整理时间 */
 	private scheduleNext(playerId: string, cursec: number) {
 		const interval = globalConfig.interval * 1000 || 60000;
-		this.nextSortTickMap.set(playerId, cursec + interval);
-		getPlayerById(playerId)?.sendMessage(`next:${cursec + interval}`);
+		this.nextSortTimeMap.set(playerId, cursec + interval);
+		// getPlayerById(playerId)?.sendMessage(`next:${cursec + interval}`);
 	}
 
 	/** 推迟下一次整理时间 */
 	private postpone(playerId: string, cursec: number, seconds: number) {
-		this.nextSortTickMap.set(playerId, cursec + seconds * 1000);
-		getPlayerById(playerId)?.sendMessage(`post:${seconds} ${cursec + seconds}`);
+		this.nextSortTimeMap.set(playerId, cursec + seconds * 1000);
+		// getPlayerById(playerId)?.sendMessage(`post:${seconds} ${cursec + seconds}`);
 	}
 }
