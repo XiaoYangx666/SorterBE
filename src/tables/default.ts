@@ -1519,4 +1519,6 @@ export const ids: string[] = [
 	"golden_nautilus_armor",
 	"diamond_nautilus_armor",
 	"netherite_nautilus_armor",
+	//26.10新增
+	"golden_dandelion",
 ];

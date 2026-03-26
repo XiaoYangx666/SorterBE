@@ -1555,6 +1555,7 @@ export const ids: string[] = [
 	"crimson_roots",
 	"warped_roots",
 	"dandelion",
+	"golden_dandelion",
 	"poppy",
 	"blue_orchid",
 	"allium",
