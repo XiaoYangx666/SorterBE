@@ -1,4 +1,4 @@
-import { EntityComponentTypes, PlayerInventoryType, system, world } from "@minecraft/server";
+import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
 import { Command, formManager, pcommand, translator } from "sapi-pro";
 import { sorter_auto } from "../config";
 import { CmdLang, MessageLang } from "../lang";
@@ -11,6 +11,7 @@ import {
 } from "./sort";
 import { sortCmdHandler } from "./sortCommand";
 import { sorterMenu } from "./sorterUI";
+import { profiler } from "./profiler";
 
 //---命令---
 const sortShortCommand = new Command("r", translator.translate(CmdLang.r), false, sortCmdHandler);
@@ -72,6 +73,8 @@ world.afterEvents.playerInteractWithEntity.subscribe((t) => {
 //自动整理背包调度器
 export const scheduler = new SorterScheduler();
 scheduler.start();
+
+profiler.start();
 
 //玩家进入消息推送
 world.afterEvents.playerSpawn.subscribe((e) => {

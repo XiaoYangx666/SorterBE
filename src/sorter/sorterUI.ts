@@ -1,18 +1,21 @@
 import { system } from "@minecraft/server";
 import { CommonForm, FieldType, LangSettingForm, translator } from "sapi-pro";
 import { getGlobalConfig, getUserConfig, saveUserConfig, setGlobalConfig } from "../config";
+import { sorterInfo } from "../constants";
 import {
 	AboutFormLang,
 	GlobalConfigLang,
 	MenuLang,
 	MessageLang,
+	ProfileFormLang,
 	UILang,
 	UserSettingLang,
 } from "../lang";
 import { orderTables } from "../tables";
 import { sortDirs, sortMethods } from "./methods";
 import { mes } from "./sort";
-import { sorterInfo } from "../constants";
+import { profiler } from "./profiler";
+import { getPlayerById } from "sapi-pro/func";
 
 export const sorterMenu = CommonForm.ButtonForm({
 	title: MenuLang.title,
@@ -33,6 +36,14 @@ export const sorterMenu = CommonForm.ButtonForm({
 			},
 		},
 		{
+			label: ProfileFormLang.title,
+			icon: "ui/icon_timer.png",
+			isAdmin: true,
+			func(context) {
+				context.push(profileForm);
+			},
+		},
+		{
 			label: MenuLang.lang,
 			icon: "gui/newgui/Language18.png",
 			func(context) {
@@ -40,8 +51,8 @@ export const sorterMenu = CommonForm.ButtonForm({
 			},
 		},
 		{
-			label: MenuLang.about,
-			icon: "items/book_written",
+			label: AboutFormLang.title,
+			icon: "items/book_written.png",
 			func(context) {
 				context.push(aboutForm);
 			},
@@ -153,4 +164,53 @@ const aboutForm = CommonForm.BodyInfoForm(AboutFormLang.title, (form, p, args, t
 	}) as string;
 	const changeLog = t(AboutFormLang.changeLog) as string;
 	form.body(about + "\n\n" + changeLog);
+});
+
+const profileForm = CommonForm.BodyInfoForm(ProfileFormLang.title, (form, p, args, t) => {
+	// 统计数据
+	const avg = profiler.getAverageTime();
+	const total = profiler.getTotalCount();
+	const slowest = profiler.getSlowestPlayer();
+	const maxSingle = profiler.getMaxSingle();
+	const playerAvg = profiler.getPlayerAverage(p.id);
+
+	// 格式化（避免小数太长）
+	const format = (n: number) => n.toFixed(2);
+
+	let body = "";
+
+	// 全局信息
+	body += t(ProfileFormLang.global, {
+		avg: format(avg),
+		total,
+	});
+
+	// 当前玩家
+	body +=
+		"\n\n" +
+		t(ProfileFormLang.player, {
+			avg: format(playerAvg),
+		});
+
+	// 最慢玩家（平均）
+	if (slowest) {
+		body +=
+			"\n\n" +
+			t(ProfileFormLang.slowest, {
+				player: getPlayerById(slowest.playerId)?.name ?? "unknow",
+				avg: format(slowest.avg),
+			});
+	}
+
+	// 单次最慢
+	if (maxSingle) {
+		body +=
+			"\n\n" +
+			t(ProfileFormLang.maxSingle, {
+				player: getPlayerById(maxSingle.playerId)?.name ?? "unknow",
+				duration: format(maxSingle.duration),
+			});
+	}
+
+	form.body(body);
 });

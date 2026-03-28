@@ -392,16 +392,6 @@ export const MenuLang = defineLangTree({
 		ko_KR: "언어",
 		es_ES: "Idioma",
 	},
-	about: {
-		zh_CN: "关于",
-		zh_TW: "關於",
-		en_US: "About",
-		ja_JP: "情報",
-		fr_FR: "À propos",
-		pt_BR: "Sobre",
-		ko_KR: "정보",
-		es_ES: "Acerca de",
-	},
 });
 
 export const AboutFormLang = defineLangTree({
@@ -419,7 +409,7 @@ export const AboutFormLang = defineLangTree({
 	content: {
 		zh_CN: "自动整理 v{version}\n作者：{author}\nQQ交流群：{group}",
 		zh_TW: "自動整理 v{version}\n作者：{author}\nQQ群：{group}",
-		en_US: "Auto Sort v{version}\nAuthor: {author}\nQQ Group: {group}",
+		en_US: "Sorter v{version}\nAuthor: {author}\nQQ Group: {group}",
 		ja_JP: "自動整理 v{version}\n作者：{author}\nQQグループ：{group}",
 		fr_FR: "Tri Auto v{version}\nAuteur : {author}\nGroupe QQ : {group}",
 		pt_BR: "Organizador v{version}\nAutor: {author}\nGrupo QQ: {group}",
@@ -433,13 +423,85 @@ export const AboutFormLang = defineLangTree({
 			"1. 支持语言切换功能\n" +
 			"2. 金蒲公英加入 ID 表\n" +
 			"3. 支持跳过潜影盒及收纳袋\n" +
-			"4. 优化自动整理调度逻辑",
+			"4. 优化自动整理调度逻辑\n" +
+			"5. 添加性能统计功能\n" +
+			"6. 优化自动整理性能",
 
 		en_US:
 			"v1.4.0 (Supports 26.10+)\n" +
 			"1. Added language switching support\n" +
 			"2. Added Torchflower to ID table\n" +
 			"3. Added option to skip shulker boxes and bundles\n" +
-			"4. Improved auto-sort scheduling logic",
+			"4. Improved auto-sort scheduling logic\n" +
+			"5. Added performance statistics feature\n" +
+			"6. Optimized automatic sorting performance\n",
+	},
+});
+
+export const ProfileFormLang = defineLangTree({
+	title: {
+		zh_CN: "性能统计",
+		zh_TW: "效能統計",
+		en_US: "Performance Stats",
+		ja_JP: "パフォーマンス統計",
+		fr_FR: "Statistiques de performance",
+		pt_BR: "Estatísticas de desempenho",
+		ko_KR: "성능 통계",
+		es_ES: "Estadísticas de rendimiento",
+	},
+
+	empty: {
+		zh_CN: "暂无统计数据",
+		zh_TW: "暫無統計資料",
+		en_US: "No data available",
+		ja_JP: "データがありません",
+		fr_FR: "Aucune donnée disponible",
+		pt_BR: "Nenhum dado disponível",
+		ko_KR: "데이터 없음",
+		es_ES: "No hay datos disponibles",
+	},
+
+	global: {
+		zh_CN: "全局统计\n平均耗时: {avg} ms\n总整理次数: {total}",
+		zh_TW: "全域統計\n平均耗時: {avg} ms\n總整理次數: {total}",
+		en_US: "Global Stats\nAvg Time: {avg} ms\nTotal Sorts: {total}",
+		ja_JP: "全体統計\n平均時間: {avg} ms\n総整理回数: {total}",
+		fr_FR: "Statistiques globales\nTemps moyen : {avg} ms\nTotal : {total}",
+		pt_BR: "Estatísticas globais\nTempo médio: {avg} ms\nTotal: {total}",
+		ko_KR: "전체 통계\n평균 시간: {avg} ms\n총 정리 횟수: {total}",
+		es_ES: "Estadísticas globales\nTiempo medio: {avg} ms\nTotal: {total}",
+	},
+
+	player: {
+		zh_CN: "你的统计\n平均耗时: {avg} ms",
+		zh_TW: "你的統計\n平均耗時: {avg} ms",
+		en_US: "Your Stats\nAvg Time: {avg} ms",
+		ja_JP: "あなたの統計\n平均時間: {avg} ms",
+		fr_FR: "Vos statistiques\nTemps moyen : {avg} ms",
+		pt_BR: "Suas estatísticas\nTempo médio: {avg} ms",
+		ko_KR: "내 통계\n평균 시간: {avg} ms",
+		es_ES: "Tus estadísticas\nTiempo medio: {avg} ms",
+	},
+
+	slowest: {
+		zh_CN: "最慢玩家（平均）\n玩家: {player}\n平均耗时: {avg} ms",
+		zh_TW: "最慢玩家（平均）\n玩家: {player}\n平均耗時: {avg} ms",
+		en_US: "Slowest Player (Avg)\nPlayer: {player}\nAvg Time: {avg} ms",
+		ja_JP: "最も遅いプレイヤー（平均）\nプレイヤー: {player}\n平均時間: {avg} ms",
+		fr_FR: "Joueur le plus lent (moyenne)\nJoueur : {player}\nTemps moyen : {avg} ms",
+		pt_BR: "Jogador mais lento (média)\nJogador: {player}\nTempo médio: {avg} ms",
+		ko_KR: "가장 느린 플레이어 (평균)\n플레이어: {player}\n평균 시간: {avg} ms",
+		es_ES: "Jugador más lento (media)\nJugador: {player}\nTiempo medio: {avg} ms",
+	},
+
+	maxSingle: {
+		zh_CN: "单次最慢\n玩家: {player}\n耗时: {duration} ms",
+		zh_TW: "單次最慢\n玩家: {player}\n耗時: {duration} ms",
+		en_US: "Max Single\nPlayer: {player}\nTime: {duration} ms",
+		ja_JP: "単発最大\nプレイヤー: {player}\n時間: {duration} ms",
+		fr_FR: "Plus long (une fois)\nJoueur : {player}\nTemps : {duration} ms",
+		pt_BR: "Maior tempo único\nJogador: {player}\nTempo: {duration} ms",
+		ko_KR: "단일 최대\n플레이어: {player}\n시간: {duration} ms",
+		es_ES: "Máximo individual\nJugador: {player}\nTiempo: {duration} ms",
 	},
 });
