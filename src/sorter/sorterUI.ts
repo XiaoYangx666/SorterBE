@@ -1,10 +1,18 @@
 import { system } from "@minecraft/server";
 import { CommonForm, FieldType, LangSettingForm, translator } from "sapi-pro";
 import { getGlobalConfig, getUserConfig, saveUserConfig, setGlobalConfig } from "../config";
-import { GlobalConfigLang, MenuLang, MessageLang, UILang, UserSettingLang } from "../lang";
+import {
+	AboutFormLang,
+	GlobalConfigLang,
+	MenuLang,
+	MessageLang,
+	UILang,
+	UserSettingLang,
+} from "../lang";
 import { orderTables } from "../tables";
 import { sortDirs, sortMethods } from "./methods";
 import { mes } from "./sort";
+import { sorterInfo } from "../constants";
 
 export const sorterMenu = CommonForm.ButtonForm({
 	title: MenuLang.title,
@@ -29,6 +37,13 @@ export const sorterMenu = CommonForm.ButtonForm({
 			icon: "gui/newgui/Language18.png",
 			func(context) {
 				context.push(LangSettingForm);
+			},
+		},
+		{
+			label: MenuLang.about,
+			icon: "items/book_written",
+			func(context) {
+				context.push(aboutForm);
 			},
 		},
 	],
@@ -95,7 +110,7 @@ const globalConfigForm = CommonForm.ConfigForm().create(
 		skipShulkerBox: {
 			type: FieldType.Boolean,
 			label: GlobalConfigLang.skipShulkerBox,
-			tooltip: GlobalConfigLang.skipShulkerBox_tip,
+			tooltip: GlobalConfigLang.skipShulkerBox,
 		},
 		interval: {
 			type: FieldType.Slider,
@@ -129,3 +144,13 @@ const globalConfigForm = CommonForm.ConfigForm().create(
 		},
 	}
 );
+
+const aboutForm = CommonForm.BodyInfoForm(AboutFormLang.title, (form, p, args, t) => {
+	const about = t(AboutFormLang.content, {
+		version: sorterInfo.version,
+		author: sorterInfo.author,
+		group: "1004513100",
+	}) as string;
+	const changeLog = t(AboutFormLang.changeLog) as string;
+	form.body(about + "\n\n" + changeLog);
+});

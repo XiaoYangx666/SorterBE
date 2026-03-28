@@ -1,3 +1,5 @@
+import { PackInfo } from "sapi-pro";
+
 export const ShulkerBoxIds = new Set([
 	"minecraft:undyed_shulker_box",
 	"minecraft:white_shulker_box",
@@ -38,4 +40,11 @@ export const BundleIds = new Set([
 	"minecraft:pink_bundle",
 ]);
 
-export const TypeIds = {};
+export const sorterInfo: PackInfo = {
+	name: "SorterBE",
+	version: "1.4.0",
+	author: "XiaoYangx666",
+	nameSpace: "sorter",
+	uuid: "19ccda3d-c5b4-48e3-8538-8f9ffb7cfb70",
+	description: "SorterBE，自动整理，输入/sorter即可打开配置文件，输入/r整理背包或容器",
+};
