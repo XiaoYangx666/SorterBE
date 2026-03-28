@@ -45,26 +45,34 @@ export async function sortContainer(
 		return player.sendMessage("无法获取排序方法");
 	}
 	//构造物品数组和可用槽位数组
-	let itemArray: ItemStack[] = [];
-	let availableSlots: boolean[] = new Array(type.size ?? container.size);
+	const itemArray: ItemStack[] = [];
+	const availableSlots: boolean[] = new Array(type.size ?? container.size);
+	const items: (ItemStack | undefined)[] = new Array(type.size ?? container.size);
+	const itemAmount: (number | undefined)[] = new Array(type.size ?? container.size);
 
 	for (let slot = type.minSlot; slot < container.size; slot++) {
-		let item = container.getItem(slot);
+		const containerSlot = container.getSlot(slot);
 		availableSlots[slot] = false;
-		if (item) {
-			//跳过被锁定物品
-			if (item.lockMode === ItemLockMode.slot) continue;
+		items[slot] = undefined;
+		itemAmount[slot] = undefined;
+		if (containerSlot.hasItem()) {
 			//跳过潜影盒
-			if (globalConfig.skipShulkerBox && ShulkerBoxIds.has(item.typeId)) {
+			if (globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) {
 				continue;
 			}
 			//跳过收纳袋
-			if (globalConfig.skipBundle && BundleIds.has(item?.typeId)) {
+			if (globalConfig.skipBundle && BundleIds.has(containerSlot.typeId)) {
 				continue;
 			}
+			const item = containerSlot.getItem();
+			if (!item) continue;
+			//跳过被锁定物品
+			if (item.lockMode === ItemLockMode.slot) continue;
 
 			//未跳过，则添加到物品数组
 			itemArray.push(item);
+			items[slot] = item;
+			itemAmount[slot] = item.amount;
 		}
 		//设置为可用栏位
 		availableSlots[slot] = true;
@@ -97,6 +105,30 @@ export async function sortContainer(
 				result.push(item);
 			}
 		}
+
+		// const finalItem = [];
+		// //未改变的直接跳过
+		// for (let i = 0, j = 0; i < result.length; i++, j++) {
+		// 	console.warn(availableSlots[j]);
+		// 	if (!availableSlots[j]) continue;
+
+		// 	const to = result[i];
+		// 	const from = items[j];
+		// 	const fromAmout = itemAmount[j];
+		// 	if (from?.typeId == to.typeId && fromAmout === to.amount && from.isStackableWith(to)) {
+		// 		console.warn(
+		// 			`lock:${i} ${j} ${from?.typeId}(${fromAmout}) ${to.typeId}(${to?.amount})`
+		// 		);
+		// 		availableSlots[j] = false;
+		// 	} else {
+		// 		console.warn(
+		// 			`item:${i} ${j} ${from?.typeId}(${fromAmout}) ${to.typeId}(${to?.amount})`
+		// 		);
+		// 		finalItem.push(result[i]);
+		// 	}
+		// }
+		console.warn(JSON.stringify(itemAmount));
+
 		//调用对应的放置方法
 		sortDirs[dirIdx].func(container, result, availableSlots, type);
 	} catch (e) {
