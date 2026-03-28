@@ -13,6 +13,7 @@ import { BundleIds, ShulkerBoxIds } from "../constants";
 import { logger } from "../ext";
 import { MessageLang } from "../lang";
 import { sortDirs, sortMethods } from "./methods";
+import { profiler } from "./profiler";
 
 export interface ContaienrTypeData {
 	minSlot: number;
@@ -29,39 +30,54 @@ export const ContainerTypes = {
 } as const;
 export type ContainerTypes = keyof typeof ContainerTypes;
 
-// 整理函数
+export interface SlotInfo {
+	slot: number;
+	item?: ItemStack;
+	amount?: number;
+	available: boolean;
+}
+
+/**
+ * 整理container，返回整理时间
+ * @param container 容器
+ * @param type 容器类型
+ * @param player 目标玩家
+ * @returns 整理用时(ms)
+ */
 export async function sortContainer(
 	container: Container | undefined,
 	type: ContaienrTypeData = ContainerTypes.common,
 	player: Player
 ) {
-	if (!container) return;
+	if (!container) return 0;
+	const start = Date.now();
 	//获取玩家的整理配置
 	const methodIdx = sorter_method.get(player) ?? 0;
 	const dirIdx = sorter_dir.get(player) ?? 0;
 
 	const method = sortMethods[methodIdx];
 	if (!method) {
-		return player.sendMessage("无法获取排序方法");
+		player.sendMessage("无法获取排序方法");
+		return 0;
 	}
 	//构造物品数组和可用槽位数组
+	const size = type.size ?? container.size;
+	const slots: SlotInfo[] = new Array(size);
 	const itemArray: ItemStack[] = [];
-	const availableSlots: boolean[] = new Array(type.size ?? container.size);
-	const items: (ItemStack | undefined)[] = new Array(type.size ?? container.size);
-	const itemAmount: (number | undefined)[] = new Array(type.size ?? container.size);
 
-	for (let slot = type.minSlot; slot < container.size; slot++) {
-		const containerSlot = container.getSlot(slot);
-		availableSlots[slot] = false;
-		items[slot] = undefined;
-		itemAmount[slot] = undefined;
+	for (let i = type.minSlot; i < size; i++) {
+		const containerSlot = container.getSlot(i);
+		const slot: SlotInfo = {
+			slot: i,
+			available: false,
+		};
+		slots[i] = slot;
 		if (containerSlot.hasItem()) {
-			//跳过潜影盒
-			if (globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) {
-				continue;
-			}
-			//跳过收纳袋
-			if (globalConfig.skipBundle && BundleIds.has(containerSlot.typeId)) {
+			//跳过潜影盒|收纳袋
+			if (
+				(globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) ||
+				(globalConfig.skipBundle && BundleIds.has(containerSlot.typeId))
+			) {
 				continue;
 			}
 			const item = containerSlot.getItem();
@@ -71,11 +87,11 @@ export async function sortContainer(
 
 			//未跳过，则添加到物品数组
 			itemArray.push(item);
-			items[slot] = item;
-			itemAmount[slot] = item.amount;
+			slot.item = item;
+			slot.amount = item.amount;
 		}
 		//设置为可用栏位
-		availableSlots[slot] = true;
+		slot.available = true;
 	}
 
 	try {
@@ -83,54 +99,53 @@ export async function sortContainer(
 		const func = await method.func(player);
 		itemArray.sort(func);
 		//合并
+		let last: ItemStack | undefined;
 		const result: ItemStack[] = [];
 		for (let i = 0; i < itemArray.length; i++) {
-			const topitem = result[result.length - 1];
 			const item = itemArray[i];
 			if (
-				topitem &&
-				topitem.typeId == item.typeId &&
-				topitem.isStackableWith(item) &&
-				topitem.amount < topitem.maxAmount
+				last &&
+				last.typeId == item.typeId &&
+				last.isStackableWith(item) &&
+				last.amount < last.maxAmount
 			) {
+				const total = last.amount + item.amount;
 				//可以合并
-				if (topitem.amount + item.amount <= topitem.maxAmount) {
-					topitem.amount += item.amount;
+				if (total <= last.maxAmount) {
+					last.amount = total;
 				} else {
-					item.amount = topitem.amount + item.amount - topitem.maxAmount;
-					topitem.amount = topitem.maxAmount;
+					item.amount = total - last.maxAmount;
+					last.amount = last.maxAmount;
 					result.push(item);
+					last = item;
 				}
 			} else {
 				result.push(item);
+				last = item;
 			}
 		}
 
-		// const finalItem = [];
-		// //未改变的直接跳过
-		// for (let i = 0, j = 0; i < result.length; i++, j++) {
-		// 	console.warn(availableSlots[j]);
-		// 	if (!availableSlots[j]) continue;
+		const finalItem = [];
+		//跳过未改变的物品
+		for (let i = 0, j = type.minSlot; i < result.length && j < size; j++) {
+			if (!slots[j].available) continue;
 
-		// 	const to = result[i];
-		// 	const from = items[j];
-		// 	const fromAmout = itemAmount[j];
-		// 	if (from?.typeId == to.typeId && fromAmout === to.amount && from.isStackableWith(to)) {
-		// 		console.warn(
-		// 			`lock:${i} ${j} ${from?.typeId}(${fromAmout}) ${to.typeId}(${to?.amount})`
-		// 		);
-		// 		availableSlots[j] = false;
-		// 	} else {
-		// 		console.warn(
-		// 			`item:${i} ${j} ${from?.typeId}(${fromAmout}) ${to.typeId}(${to?.amount})`
-		// 		);
-		// 		finalItem.push(result[i]);
-		// 	}
-		// }
-		console.warn(JSON.stringify(itemAmount));
+			const to = result[i];
+			const from = slots[j];
+			if (
+				from?.item?.typeId == to.typeId &&
+				from.amount === to.amount &&
+				from.item.isStackableWith(to)
+			) {
+				slots[j].available = false;
+			} else {
+				finalItem.push(result[i]);
+			}
+			i++;
+		}
 
 		//调用对应的放置方法
-		sortDirs[dirIdx].func(container, result, availableSlots, type);
+		sortDirs[dirIdx].func(container, finalItem, slots, type);
 	} catch (e) {
 		if (e instanceof Error) {
 			const t = translator.createFor(player);
@@ -138,6 +153,9 @@ export async function sortContainer(
 		}
 		logger.error("整理出错", e);
 	}
+	const end = Date.now();
+	profiler.record(player.id, start, end);
+	return end - start;
 }
 
 //自动整理实体白名单

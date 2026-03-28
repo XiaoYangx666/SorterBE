@@ -1,6 +1,6 @@
-import { EntityComponentTypes, ItemStack, Player, system, world } from "@minecraft/server";
+import { EntityComponentTypes, ItemStack, Player, system } from "@minecraft/server";
 import { intervalBus } from "sapi-pro/Event";
-import { getAllPlayers, getPlayerById } from "sapi-pro/func";
+import { getAllPlayers } from "sapi-pro/func";
 import { globalConfig, sorter_autoback } from "../config";
 import { ContainerTypes, sortContainer } from "./sort";
 

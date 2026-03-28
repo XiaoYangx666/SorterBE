@@ -23,10 +23,7 @@ export function sortCmdHandler(player: Player) {
 	if (!target) return;
 
 	system.run(async () => {
-		const start = Date.now();
-		await sortContainer(target.container, target.type, player);
-		const end = Date.now();
-		const time = end - start;
+		const time = await sortContainer(target.container, target.type, player);
 		mes(player, MessageLang.sortSuccess, {
 			target: target.dis === -1 ? MessageLang.backPack : "",
 			time: time == 0 ? "<1" : time,

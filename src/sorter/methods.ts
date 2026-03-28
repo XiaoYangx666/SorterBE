@@ -4,7 +4,7 @@ import { sorter_ordertable } from "../config";
 import { UILang } from "../lang";
 import { getOrderTableIdMap } from "../tables";
 import { compareMap } from "./compare";
-import { ContaienrTypeData } from "./sort";
+import { ContaienrTypeData, SlotInfo } from "./sort";
 
 //---通用比较方法---
 type CompareFuncBuilder = (player: Player) => Promise<CompareFunc> | CompareFunc;
@@ -58,14 +58,14 @@ interface SortDir {
 type SortDirfunc = (
 	container: Container,
 	itemArray: ItemStack[],
-	slots: boolean[],
+	slots: SlotInfo[],
 	type: ContaienrTypeData
 ) => void;
 
 const putInZ: SortDirfunc = (container, itemArray, slots, type) => {
 	const min = type.minSlot;
 	for (let i = min, j = 0; i < slots.length; i++) {
-		if (slots[i] === false) continue;
+		if (slots[i].available === false) continue;
 		container.setItem(i, undefined);
 		if (j < itemArray.length) {
 			container.setItem(i, itemArray[j++]);
@@ -82,7 +82,7 @@ const putInN: SortDirfunc = (container, itemArray, slots, type) => {
 	for (let i = 0; i < cols; i++) {
 		for (let row = 0; row < rows; row++) {
 			const idx = i + row * cols + min;
-			if (!slots[idx]) continue;
+			if (!slots[idx].available) continue;
 			// world.sendMessage(idx.toString());
 			container.setItem(idx, undefined);
 			if (c < itemArray.length) {
