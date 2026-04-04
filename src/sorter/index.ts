@@ -1,7 +1,9 @@
 import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
 import { Command, formManager, pcommand, translator } from "sapi-pro";
 import { sorter_auto } from "../config";
+import { lang } from "../constants";
 import { CmdLang, MessageLang } from "../lang";
+import { profiler } from "./profiler";
 import { SorterScheduler } from "./scheduler";
 import {
 	entityWhiteList,
@@ -11,13 +13,22 @@ import {
 } from "./sort";
 import { sortCmdHandler } from "./sortCommand";
 import { sorterMenu } from "./sorterUI";
-import { profiler } from "./profiler";
 
 //---命令---
-const sortShortCommand = new Command("r", translator.translate(CmdLang.r), false, sortCmdHandler);
-const sorter = new Command("sorter", translator.translate(CmdLang.sorter), false, (player) => {
-	formManager.openNamed(player, "sorter.main", {}, 5);
-});
+const sortShortCommand = new Command(
+	"r",
+	translator.translate(CmdLang.r, undefined, lang),
+	false,
+	sortCmdHandler
+);
+const sorter = new Command(
+	"sorter",
+	translator.translate(CmdLang.sorter, undefined, lang),
+	false,
+	(player) => {
+		formManager.openNamed(player, "sorter.main", {}, 5);
+	}
+);
 
 pcommand.registerNative(sortShortCommand);
 pcommand.registerNative(sorter);
@@ -82,9 +93,9 @@ world.afterEvents.playerSpawn.subscribe((e) => {
 		return;
 	}
 	const player = e.player;
-	const t = translator.createFor(player);
-	player.sendMessage(t("§2[自动整理] 插件加载成功", MessageLang.playerSpawn.loaded));
-	player.sendMessage(t("§f§l使用 §e/sorter §f§l打开菜单", MessageLang.playerSpawn.openMsg));
+	const t = translator.createPureFor(player);
+	player.sendMessage(t(MessageLang.playerSpawn.loaded));
+	player.sendMessage(t(MessageLang.playerSpawn.openMsg));
 });
 
 //背包物品变更订阅

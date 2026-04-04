@@ -1,5 +1,6 @@
-import { PackInfo } from "sapi-pro";
+import { languages, PackInfo } from "sapi-pro";
 
+export const lang: languages = "zh_CN";
 export const ShulkerBoxIds = new Set([
 	"minecraft:undyed_shulker_box",
 	"minecraft:white_shulker_box",
