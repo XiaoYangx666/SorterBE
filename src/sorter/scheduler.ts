@@ -10,8 +10,8 @@ export class SorterScheduler {
 	// 存储最后一次手动操作的时间戳 (ms)
 	private readonly lastActionTimeMap: Map<string, number> = new Map();
 	// 存储最后一次物品改变
-	private readonly lastItemMap: Map<string, { item: string | undefined; tick: number }> =
-		new Map();
+	// private readonly lastItemMap: Map<string, { item: string | undefined; tick: number }> =
+	// 	new Map();
 
 	constructor() {}
 
@@ -35,11 +35,11 @@ export class SorterScheduler {
 			}
 		}
 
-		for (const id of this.lastItemMap.keys()) {
-			if (!onlineIds.has(id)) {
-				this.lastItemMap.delete(id);
-			}
-		}
+		// for (const id of this.lastItemMap.keys()) {
+		// 	if (!onlineIds.has(id)) {
+		// 		this.lastItemMap.delete(id);
+		// 	}
+		// }
 
 		// 同样检查 lastActionTickMap
 		for (const id of this.lastActionTimeMap.keys()) {
@@ -121,23 +121,23 @@ export class SorterScheduler {
 		this.lastActionTimeMap.set(player.id, cursec);
 	}
 
-	public onPlayerInvChange(player: Player, before?: ItemStack, item?: ItemStack) {
-		if (before == undefined && item == undefined) return;
+	// public onPlayerInvChange(player: Player, before?: ItemStack, item?: ItemStack) {
+	// 	if (before == undefined && item == undefined) return;
 
-		const tick = system.currentTick;
-		const record = this.lastItemMap.get(player.id);
+	// 	const tick = system.currentTick;
+	// 	const record = this.lastItemMap.get(player.id);
 
-		if (record?.tick == tick) {
-			if (item == undefined && before!.typeId == record.item) {
-				this.onPlayerAction(player);
-			}
-			if (item != undefined && record.item == undefined) {
-				this.onPlayerAction(player);
-			}
-		} else {
-			this.lastItemMap.set(player.id, { item: item?.typeId, tick: tick });
-		}
-	}
+	// 	if (record?.tick == tick) {
+	// 		if (item == undefined && before!.typeId == record.item) {
+	// 			this.onPlayerAction(player);
+	// 		}
+	// 		if (item != undefined && record.item == undefined) {
+	// 			this.onPlayerAction(player);
+	// 		}
+	// 	} else {
+	// 		this.lastItemMap.set(player.id, { item: item?.typeId, tick: tick });
+	// 	}
+	// }
 
 	/** 设置下一次常规整理时间 */
 	private scheduleNext(playerId: string, cursec: number) {

@@ -102,12 +102,19 @@ world.afterEvents.playerSpawn.subscribe((e) => {
 world.afterEvents.playerInventoryItemChange.subscribe((t) => {
 	if (!t.player) return;
 	if (t.inventoryType != PlayerInventoryType.Inventory) return;
-	scheduler.onPlayerInvChange(t.player, t.beforeItemStack, t.itemStack);
+	// scheduler.onPlayerInvChange(t.player, t.beforeItemStack, t.itemStack);
 
-	//cursor判据
-	const item = t.player.getComponent(EntityComponentTypes.CursorInventory)?.item;
-	if (item) {
-		//玩家操作了
+	const before = t.beforeItemStack;
+	const item = t.itemStack;
+	if (before != undefined && item == undefined) {
+		//拿了
 		scheduler.onPlayerAction(t.player);
+	} else {
+		//cursor判据
+		const item = t.player.getComponent(EntityComponentTypes.CursorInventory)?.item;
+		if (item) {
+			//玩家操作了
+			scheduler.onPlayerAction(t.player);
+		}
 	}
 });
