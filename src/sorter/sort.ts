@@ -125,27 +125,8 @@ export async function sortContainer(
 			}
 		}
 
-		const finalItem = [];
-		//跳过未改变的物品
-		for (let i = 0, j = type.minSlot; i < result.length && j < size; j++) {
-			if (!slots[j].available) continue;
-
-			const to = result[i];
-			const from = slots[j];
-			if (
-				from?.item?.typeId == to.typeId &&
-				from.amount === to.amount &&
-				from.item.isStackableWith(to)
-			) {
-				slots[j].available = false;
-			} else {
-				finalItem.push(result[i]);
-			}
-			i++;
-		}
-
 		//调用对应的放置方法
-		sortDirs[dirIdx].func(container, finalItem, slots, type);
+		sortDirs[dirIdx].func(container, result, slots, type);
 	} catch (e) {
 		if (e instanceof Error) {
 			const t = translator.createFor(player);

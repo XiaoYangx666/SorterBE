@@ -3,7 +3,7 @@
         "@minecraft/server": "2.6.0",
         "@minecraft/server-ui": "2.0.0",
         "@minecraft/vanilla-data": "1.26.10",
-        "sapi-pro": "file:../../../mcdev/SAPI-Pro/sapi-pro-0.4.0-stable.tgz"
+        "sapi-pro": "^0.4.0-stable.0"
     },
     "overrides": {
         "@minecraft/server-ui": {
