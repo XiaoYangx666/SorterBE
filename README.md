@@ -1,6 +1,6 @@
 ## SorterBE 自动整理
 
-![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.3.4_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE1.21.130+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
+![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.0_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.10+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
 
 <img src="screenshot.jpg" width="350px">
 
@@ -10,10 +10,10 @@
 
 行为包特点:
 
--   2 种整理方法, 2 种整理方向, 2 张排序表
--   支持手动键入命令整理
--   支持药水整理与实体整理
--   bds 服务器兼容
+- 2 种整理方法, 2 种整理方向, 2 张排序表
+- 支持手动键入命令整理
+- 支持药水整理与实体整理
+- bds 服务器兼容
 
 ### 下载
 
@@ -39,12 +39,12 @@
 
 #### 项目结构
 
--   src:行为包代码
-    -   sorter: 自动整理主要逻辑
-    -   tables: 顺序表
-    -   db.ts: 用到的计分板
-    -   main.ts: 初始化
--   tools: 用于生成 id 顺序表的相关工具
+- src:行为包代码
+    - sorter: 自动整理主要逻辑
+    - tables: 顺序表
+    - db.ts: 用到的计分板
+    - main.ts: 初始化
+- tools: 用于生成 id 顺序表的相关工具
 
 #### 如何自定义顺序
 
