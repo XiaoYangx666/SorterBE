@@ -339,6 +339,16 @@ export const GlobalConfigLang = defineLangTree({
 		ko_KR: "자동 정리 간격",
 		es_ES: "Intervalo de ordenación",
 	},
+	loadMessage: {
+		zh_CN: "显示加载成功消息",
+		zh_TW: "顯示載入成功訊息",
+		en_US: "Show load success message",
+		ja_JP: "読み込み成功メッセージを表示",
+		fr_FR: "Afficher le message de chargement réussi",
+		pt_BR: "Exibir mensagem de carregamento concluído",
+		ko_KR: "로드 성공 메시지 표시",
+		es_ES: "Mostrar mensaje de carga completada",
+	},
 	saved: {
 		zh_CN: "全局配置已保存",
 		zh_TW: "全域設定已保存",
@@ -418,23 +428,35 @@ export const AboutFormLang = defineLangTree({
 	},
 
 	changeLog: {
-		zh_CN:
-			"v1.4.0（支持 26.10+）\n" +
-			"1. 支持语言切换功能\n" +
-			"2. 金蒲公英加入 ID 表\n" +
-			"3. 支持跳过潜影盒及收纳袋\n" +
-			"4. 优化自动整理调度逻辑\n" +
-			"5. 添加性能统计功能\n" +
-			"6. 优化自动整理性能",
+		zh_CN: `
+v1.4.1(支持26.30+)
+1. 支持新版本物品
+2. 优化分类整理表
+3. 添加加载提示配置项
 
-		en_US:
-			"v1.4.0 (Supports 26.10+)\n" +
-			"1. Added language switching support\n" +
-			"2. Added Torchflower to ID table\n" +
-			"3. Added option to skip shulker boxes and bundles\n" +
-			"4. Improved auto-sort scheduling logic\n" +
-			"5. Added performance statistics feature\n" +
-			"6. Optimized automatic sorting performance\n",
+v1.4.0（支持 26.10+）
+1. 支持语言切换功能
+2. 金蒲公英加入 ID 表
+3. 支持跳过潜影盒及收纳袋
+4. 优化自动整理调度逻辑
+5. 添加性能统计功能
+6. 优化自动整理性能
+`,
+
+		en_US: `
+v1.4.1 (Supports 26.30+)
+1. Added support for new version items
+2. Optimized the classification sorting table
+3. Added loading notification configuration option
+
+v1.4.0 (Supports 26.10+)
+1. Added language switching support
+2. Added Torchflower to ID table
+3. Added option to skip shulker boxes and bundles
+4. Improved auto-sort scheduling logic
+5. Added performance statistics feature
+6. Optimized automatic sorting performance
+`,
 	},
 });
 

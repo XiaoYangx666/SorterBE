@@ -389,6 +389,43 @@
 					const searchQuery = ref("");
 					const hideUsedItems = ref(false);
 					const highlightedUuid = ref(null); // 当前高亮的节点 UUID
+					
+					// --- 自动从当前目录加载字典和工程文件 ---
+					const tryLoadLocalFiles = async () => {
+						// 加载字典 vanilla.json
+						try {
+							const resp = await fetch("./vanilla.json");
+							if (resp.ok) {
+								const data = await resp.json();
+								const merged = {
+									...(data.enums?.block || {}),
+									...(data.enums?.item || {}),
+								};
+								for (const key in itemDict) delete itemDict[key];
+								Object.assign(itemDict, merged);
+								console.log(
+									`[自动加载] 字典加载完成，共 ${Object.keys(itemDict).length} 个条目`
+								);
+							}
+						} catch (_) {
+							/* 静默失败，用户仍可手动加载 */
+						}
+						
+						// 加载工程文件 project.json
+						try {
+							const resp = await fetch("./project.json");
+							if (resp.ok) {
+								const text = await resp.text();
+								if (text.includes("\"children\":")) {
+									treeData.value = JSON.parse(text);
+									console.log(`[自动加载] 工程文件加载完成`);
+								}
+							}
+						} catch (_) {
+							/* 静默失败 */
+						}
+					};
+					tryLoadLocalFiles();
 
 					// 提供给子组件的方法
 					const rootContext = {

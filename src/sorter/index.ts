@@ -1,6 +1,6 @@
 import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
 import { Command, formManager, pcommand, translator } from "sapi-pro";
-import { sorter_auto } from "../config";
+import { globalConfig, sorter_auto } from "../config";
 import { lang } from "../constants";
 import { CmdLang, MessageLang } from "../lang";
 import { profiler } from "./profiler";
@@ -89,6 +89,7 @@ profiler.start();
 
 //玩家进入消息推送
 world.afterEvents.playerSpawn.subscribe((e) => {
+	if (!globalConfig.showLoadSuccessMessage) return;
 	if (e.player == undefined || !e.initialSpawn) {
 		return;
 	}

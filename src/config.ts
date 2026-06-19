@@ -46,6 +46,8 @@ export interface GlobalConfig {
 	interval: number;
 	/**操作冷却时间 */
 	actionCooldown: number;
+	/**是否显示加载成功消息 */
+	showLoadSuccessMessage: boolean;
 }
 
 export function isGlobalConfig(value: unknown): value is GlobalConfig {
@@ -66,6 +68,7 @@ const defaultGlobalConfig: GlobalConfig = {
 	skipShulkerBox: false,
 	interval: 60,
 	actionCooldown: 10,
+	showLoadSuccessMessage: true,
 };
 
 export const globalConfig: GlobalConfig = worldDeferredObject<GlobalConfig>(getGlobalConfig);

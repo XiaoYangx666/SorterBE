@@ -1,6 +1,12 @@
 import { system } from "@minecraft/server";
 import { CommonForm, FieldType, LangSettingForm, translator } from "sapi-pro";
-import { getGlobalConfig, getUserConfig, saveUserConfig, setGlobalConfig } from "../config";
+import {
+	getGlobalConfig,
+	getUserConfig,
+	globalConfig,
+	saveUserConfig,
+	setGlobalConfig,
+} from "../config";
 import { sorterInfo } from "../constants";
 import {
 	AboutFormLang,
@@ -138,6 +144,10 @@ const globalConfigForm = CommonForm.ConfigForm().create(
 			defaultValue: 10,
 			min: 5,
 			max: 20,
+		},
+		showLoadSuccessMessage: {
+			type: FieldType.Boolean,
+			label: GlobalConfigLang.loadMessage,
 		},
 	},
 	{

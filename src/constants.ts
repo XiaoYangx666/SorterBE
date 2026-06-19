@@ -43,7 +43,7 @@ export const BundleIds = new Set([
 
 export const sorterInfo: PackInfo = {
 	name: "SorterBE",
-	version: "1.4.0",
+	version: "1.4.1",
 	author: "XiaoYangx666",
 	nameSpace: "sorter",
 	uuid: "19ccda3d-c5b4-48e3-8538-8f9ffb7cfb70",

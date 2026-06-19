@@ -49,9 +49,9 @@ async function main() {
 	const versions = [...new Set(all.map((i) => i.v))].sort((a, b) => b - a);
 
 	// 取最新10个
-	const latest10 = versions.slice(0, 10);
+	const latest10 = versions.slice(0, 20);
 
-	console.log("\n最新版本列表（取前10个）：");
+	console.log("\n最新版本列表（取前20个）：");
 	latest10.forEach((v) => console.log(" -", v));
 
 	const input = await question("\n请输入要处理的版本号: ");
