@@ -1,21 +1,16 @@
 {
+    "type": "module",
     "dependencies": {
         "@minecraft/server": "2.8.0",
         "@minecraft/server-ui": "2.1.0",
-        "@minecraft/vanilla-data": "1.26.30",
-        "sapi-pro": "^0.4.1-stable"
-    },
-    "overrides": {
-        "@minecraft/server-ui": {
-            "@minecraft/server": "2.8.0"
-        }
+        "@minecraft/vanilla-data": "1.26.33",
+        "sapi-pro": "file:../../../mcdev/SAPI-Pro/sapi-pro-0.4.2-stable.tgz"
     },
     "scripts": {
-        "update": "npx sapi-kit update",
-        "pack": "npx sapi-kit pack",
-        "dev": "npx sapi-kit dev",
-        "build": "npx sapi-kit build",
-        "copy": "npx sapi-kit copy"
+        "pack": "bepack pack",
+        "dev": "bepack dev",
+        "build": "bepack build",
+        "copy": "bepack copy"
     },
     "devDependencies": {
         "@types/node": "^24.10.2"

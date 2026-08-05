@@ -1,9 +1,6 @@
 scripts
 node_modules
-build
 *.mcpack
-src/SAPI-Pro
-package-lock.json
-cache
 tools/data.json
 tools/vanilla.json
+dist

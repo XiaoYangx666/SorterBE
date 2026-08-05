@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
+		"target": "es2023",
 		"moduleResolution": "bundler",
-		"module": "esnext",
-		"lib": ["ESNext", "DOM"],
+		"module": "es2022",
+		"lib": ["ES2022", "DOM"],
 		"types": [],
 		"declaration": false,
 		"noLib": false,
@@ -13,11 +13,9 @@
 		"preserveConstEnums": true,
 		"strict": true,
 		"noImplicitAny": true,
-		"outDir": "cache",
+		"outDir": "scripta",
 		"rootDir": "src",
 		"allowJs": true,
-		"incremental": true,
-		"tsBuildInfoFile": "cache/tsbuildinfo.json",
 		"skipLibCheck": true
 	},
 	"include": ["./src"],

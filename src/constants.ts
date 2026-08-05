@@ -42,10 +42,10 @@ export const BundleIds = new Set([
 ]);
 
 export const sorterInfo: PackInfo = {
-	name: "SorterBE",
-	version: "1.4.1",
+	name: "**NAME**",
+	version: "**VERSION**",
 	author: "XiaoYangx666",
 	nameSpace: "sorter",
-	uuid: "19ccda3d-c5b4-48e3-8538-8f9ffb7cfb70",
+	uuid: "**UUID**",
 	description: "SorterBE，自动整理，输入/sorter即可打开配置文件，输入/r整理背包或容器",
 };
