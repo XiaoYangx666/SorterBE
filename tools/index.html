@@ -161,10 +161,15 @@
 							class="w-full px-2 py-1.5 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
 						/>
 						<div class="mt-1 flex justify-between text-[10px] text-gray-400 px-1">
-							<span
+							<label class="cursor-pointer"
 								>只显示未分类:
 								<input type="checkbox" v-model="hideUsedItems" class="align-middle"
-							/></span>
+							/></label>
+							<label class="cursor-pointer text-red-500" title="来自 new_items.json">
+								只显示新增:
+								<input type="checkbox" v-model="onlyNew" class="align-middle"
+							/>
+							</label>
 						</div>
 					</div>
 					<div class="flex-1 overflow-y-auto p-2">
@@ -187,6 +192,13 @@
 										class="absolute right-1 top-1 w-2 h-2 bg-green-400 rounded-full ring-2 ring-white cursor-pointer hover:scale-125 transition-transform"
 										title="已分类 (点击定位)"
 									></div>
+									<!-- 新版本物品标记 -->
+									<span
+										v-if="newIds.has(element.id)"
+										class="absolute right-1 bottom-1 text-[9px] leading-none px-1 py-0.5 bg-red-500 text-white rounded"
+										title="新版本物品"
+										>新</span
+									>
 
 									<div
 										class="w-7 h-7 bg-gray-100 rounded flex items-center justify-center mr-2 text-[10px] text-gray-500 font-mono"
@@ -388,6 +400,8 @@
 					const treeData = ref([]);
 					const searchQuery = ref("");
 					const hideUsedItems = ref(false);
+					const onlyNew = ref(false);
+					const newIds = ref(new Set());
 					const highlightedUuid = ref(null); // 当前高亮的节点 UUID
 					
 					// --- 自动从当前目录加载字典和工程文件 ---
@@ -423,6 +437,22 @@
 							}
 						} catch (_) {
 							/* 静默失败 */
+						}
+
+						// 加载新增物品列表 new_items.json（可选，由 tools/update.ts 生成）
+						try {
+							const resp = await fetch("./new_items.json");
+							if (resp.ok) {
+								const list = await resp.json();
+								if (Array.isArray(list)) {
+									newIds.value = new Set(list.map((x) => x.id));
+									console.log(
+										`[自动加载] 新增物品 ${newIds.value.size} 个`
+									);
+								}
+							}
+						} catch (_) {
+							/* 静默失败，可能没有待分类新增 */
 						}
 					};
 					tryLoadLocalFiles();
@@ -564,12 +594,13 @@
 					const filteredSourceItems = computed(() => {
 						const query = searchQuery.value.toLowerCase().trim();
 						const showAll = !query && Object.keys(itemDict).length > 200;
-						if (showAll && !hideUsedItems.value) return [];
+						if (showAll && !hideUsedItems.value && !onlyNew.value) return [];
 						const result = [];
 						let count = 0;
 						for (const [id, name] of Object.entries(itemDict)) {
-							if (count > 50 && !query) break;
+							if (count > 50 && !query && !onlyNew.value) break;
 							if (hideUsedItems.value && usedIds.value.has(id)) continue;
+							if (onlyNew.value && !newIds.value.has(id)) continue;
 							if (
 								!query ||
 								id.toLowerCase().includes(query) ||
@@ -704,6 +735,8 @@
 						searchQuery,
 						filteredSourceItems,
 						hideUsedItems,
+						onlyNew,
+						newIds,
 						highlightedUuid,
 						loadBedrockData,
 						cloneItem,

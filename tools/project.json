@@ -650,6 +650,12 @@
             "type": "item",
             "id": "red_mushroom_block",
             "name": "红色蘑菇方块"
+          },
+          {
+            "uuid": "d974ca44-2068-445b-a754-f9915c076191",
+            "type": "item",
+            "id": "shelf_mushroom",
+            "name": "层孔菇"
           }
         ],
         "collapsed": true,
@@ -725,6 +731,24 @@
             "type": "item",
             "id": "azalea_leaves_flowered",
             "name": "盛开的杜鹃树叶"
+          },
+          {
+            "uuid": "7d0351e2-14b7-4339-8298-3adab6738978",
+            "type": "item",
+            "id": "orange_poplar_leaves",
+            "name": "橙色杨树树叶"
+          },
+          {
+            "uuid": "3638be7b-7499-40e9-9ea1-8bab76d0b761",
+            "type": "item",
+            "id": "red_poplar_leaves",
+            "name": "红色杨树树叶"
+          },
+          {
+            "uuid": "f7b7f899-732c-425e-bb26-fac21bcbff4c",
+            "type": "item",
+            "id": "yellow_poplar_leaves",
+            "name": "黄色杨树树叶"
           }
         ],
         "collapsed": true,
@@ -847,6 +871,18 @@
                 "type": "item",
                 "id": "stripped_pale_oak_log",
                 "name": "去皮苍白橡木原木"
+              },
+              {
+                "uuid": "77b38a8c-d71b-46c7-9ae4-5586b819a997",
+                "type": "item",
+                "id": "poplar_log",
+                "name": "杨木原木"
+              },
+              {
+                "uuid": "2b3abfa8-6b43-420f-864f-547beac5bc0f",
+                "type": "item",
+                "id": "stripped_poplar_log",
+                "name": "去皮杨木原木"
               }
             ],
             "collapsed": true,
@@ -958,6 +994,18 @@
                 "type": "item",
                 "id": "stripped_pale_oak_wood",
                 "name": "去皮苍白橡木"
+              },
+              {
+                "uuid": "61aa089e-7fc9-435b-b72c-f32d7c307901",
+                "type": "item",
+                "id": "poplar_wood",
+                "name": "杨木"
+              },
+              {
+                "uuid": "70778a1a-0433-423c-9a8d-3585ffee32bd",
+                "type": "item",
+                "id": "stripped_poplar_wood",
+                "name": "去皮杨木"
               }
             ],
             "collapsed": true,
@@ -1033,6 +1081,12 @@
                 "type": "item",
                 "id": "warped_planks",
                 "name": "诡异木板"
+              },
+              {
+                "uuid": "f1872475-46dd-4676-96cd-f73cf94a9fad",
+                "type": "item",
+                "id": "poplar_planks",
+                "name": "杨木木板"
               }
             ],
             "collapsed": true,
@@ -1114,6 +1168,12 @@
                 "type": "item",
                 "id": "warped_slab",
                 "name": "诡异木台阶"
+              },
+              {
+                "uuid": "8def8568-c0fb-4d2c-9ace-b3d0e60dce6e",
+                "type": "item",
+                "id": "poplar_slab",
+                "name": "杨木台阶"
               }
             ],
             "collapsed": true,
@@ -1189,6 +1249,12 @@
                 "type": "item",
                 "id": "warped_stairs",
                 "name": "诡异木楼梯"
+              },
+              {
+                "uuid": "8660bab3-babd-4dd4-b882-157289264e52",
+                "type": "item",
+                "id": "poplar_stairs",
+                "name": "杨木楼梯"
               }
             ],
             "collapsed": true,
@@ -1269,6 +1335,12 @@
                     "type": "item",
                     "id": "warped_sign",
                     "name": "诡异木告示牌"
+                  },
+                  {
+                    "uuid": "5e7db951-40c6-4acf-8d4f-bea4d6dc4181",
+                    "type": "item",
+                    "id": "poplar_sign",
+                    "name": "杨木告示牌"
                   }
                 ],
                 "collapsed": true,
@@ -1344,6 +1416,12 @@
                     "type": "item",
                     "id": "warped_hanging_sign",
                     "name": "悬挂式诡异木告示牌"
+                  },
+                  {
+                    "uuid": "15b56316-7b0a-44fd-9eba-4a80ea9ab6f4",
+                    "type": "item",
+                    "id": "poplar_hanging_sign",
+                    "name": "悬挂式杨木告示牌"
                   }
                 ],
                 "collapsed": true,
@@ -1423,6 +1501,12 @@
                 "type": "item",
                 "id": "warped_fence",
                 "name": "诡异木栅栏"
+              },
+              {
+                "uuid": "3a56a556-c2a0-4c40-9c49-e1a99c858426",
+                "type": "item",
+                "id": "poplar_fence",
+                "name": "杨木栅栏"
               }
             ],
             "collapsed": true,
@@ -1498,6 +1582,12 @@
                 "type": "item",
                 "id": "warped_fence_gate",
                 "name": "诡异木栅栏门"
+              },
+              {
+                "uuid": "a117f388-48fe-41cc-8141-2e2e36d1b9c6",
+                "type": "item",
+                "id": "poplar_fence_gate",
+                "name": "杨木栅栏门"
               }
             ],
             "collapsed": true,
@@ -1573,6 +1663,12 @@
                 "type": "item",
                 "id": "spruce_door",
                 "name": "云杉木门"
+              },
+              {
+                "uuid": "796d9c26-e0df-44af-99f7-804b50e22046",
+                "type": "item",
+                "id": "poplar_door",
+                "name": "杨木门"
               }
             ],
             "collapsed": true,
@@ -1654,6 +1750,12 @@
                 "type": "item",
                 "id": "warped_trapdoor",
                 "name": "诡异木活板门"
+              },
+              {
+                "uuid": "693e87a5-a0bd-4f84-b44c-045670495502",
+                "type": "item",
+                "id": "poplar_trapdoor",
+                "name": "杨木活板门"
               }
             ],
             "collapsed": true,
@@ -3336,6 +3438,216 @@
         "editing": false
       },
       {
+        "uuid": "a31b21ac-e0ca-454b-b815-3c95f2799dca",
+        "type": "group",
+        "name": "羊毛楼梯",
+        "children": [
+          {
+            "uuid": "8443d3fc-503b-4b89-bee2-b786ee302294",
+            "type": "item",
+            "id": "white_wool_stairs",
+            "name": "白色羊毛楼梯"
+          },
+          {
+            "uuid": "185b479d-00e5-45b5-8a13-2334e1ae8000",
+            "type": "item",
+            "id": "light_gray_wool_stairs",
+            "name": "淡灰色羊毛楼梯"
+          },
+          {
+            "uuid": "494f3f3e-7903-4b85-b193-7e3a347c0501",
+            "type": "item",
+            "id": "gray_wool_stairs",
+            "name": "灰色羊毛楼梯"
+          },
+          {
+            "uuid": "d93c8e33-e6dd-4876-8be6-7062c8763a2a",
+            "type": "item",
+            "id": "black_wool_stairs",
+            "name": "黑色羊毛楼梯"
+          },
+          {
+            "uuid": "e71450e4-2d0e-4fb7-b518-097e9e692ab5",
+            "type": "item",
+            "id": "brown_wool_stairs",
+            "name": "棕色羊毛楼梯"
+          },
+          {
+            "uuid": "90f851f2-f30a-45d5-893a-76cf0a1924f7",
+            "type": "item",
+            "id": "red_wool_stairs",
+            "name": "红色羊毛楼梯"
+          },
+          {
+            "uuid": "3cfa4f8e-3eae-4443-8721-d3323834a4f4",
+            "type": "item",
+            "id": "orange_wool_stairs",
+            "name": "橙色羊毛楼梯"
+          },
+          {
+            "uuid": "8e26e970-e682-435f-a153-25ee4eecdc31",
+            "type": "item",
+            "id": "yellow_wool_stairs",
+            "name": "黄色羊毛楼梯"
+          },
+          {
+            "uuid": "b505c7ba-d35a-47a3-ad99-10807bd72cfe",
+            "type": "item",
+            "id": "lime_wool_stairs",
+            "name": "黄绿色羊毛楼梯"
+          },
+          {
+            "uuid": "f38087e4-e88d-4eee-aa90-f0ea08174589",
+            "type": "item",
+            "id": "green_wool_stairs",
+            "name": "绿色羊毛楼梯"
+          },
+          {
+            "uuid": "f4a30246-d14a-434d-b905-872dbdfaa66d",
+            "type": "item",
+            "id": "cyan_wool_stairs",
+            "name": "青色羊毛楼梯"
+          },
+          {
+            "uuid": "f15f2e8a-e6dc-4ef1-9149-3e5b73faeae0",
+            "type": "item",
+            "id": "light_blue_wool_stairs",
+            "name": "淡蓝色羊毛楼梯"
+          },
+          {
+            "uuid": "de8172d3-34d9-4531-9ae3-52afabea001d",
+            "type": "item",
+            "id": "blue_wool_stairs",
+            "name": "蓝色羊毛楼梯"
+          },
+          {
+            "uuid": "ede2da75-3023-458f-8cd6-460155247a98",
+            "type": "item",
+            "id": "purple_wool_stairs",
+            "name": "紫色羊毛楼梯"
+          },
+          {
+            "uuid": "01e75406-1d5a-4eb6-83d2-1c02c60a3931",
+            "type": "item",
+            "id": "magenta_wool_stairs",
+            "name": "品红色羊毛楼梯"
+          },
+          {
+            "uuid": "e3b8af56-a120-464d-b21f-add3f321fd1a",
+            "type": "item",
+            "id": "pink_wool_stairs",
+            "name": "粉红色羊毛楼梯"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
+      },
+      {
+        "uuid": "6935dcb1-8f8f-4bc6-90ff-0cdcdc785cd0",
+        "type": "group",
+        "name": "羊毛台阶",
+        "children": [
+          {
+            "uuid": "32ed5304-ae5a-4f92-a838-8c6679019537",
+            "type": "item",
+            "id": "white_wool_slab",
+            "name": "白色羊毛台阶"
+          },
+          {
+            "uuid": "b6515cb2-2d5e-46ab-af7a-316fd6f0296e",
+            "type": "item",
+            "id": "light_gray_wool_slab",
+            "name": "淡灰色羊毛台阶"
+          },
+          {
+            "uuid": "61083380-e8ae-441b-b04a-1b0270facfd1",
+            "type": "item",
+            "id": "gray_wool_slab",
+            "name": "灰色羊毛台阶"
+          },
+          {
+            "uuid": "8245a615-43c6-4100-b00e-38050f2af970",
+            "type": "item",
+            "id": "black_wool_slab",
+            "name": "黑色羊毛台阶"
+          },
+          {
+            "uuid": "79329259-8fda-4612-b838-c3b632c0e08f",
+            "type": "item",
+            "id": "brown_wool_slab",
+            "name": "棕色羊毛台阶"
+          },
+          {
+            "uuid": "a769fcee-4d6e-421d-9443-f130e58f292c",
+            "type": "item",
+            "id": "red_wool_slab",
+            "name": "红色羊毛台阶"
+          },
+          {
+            "uuid": "96afa7d6-3176-4168-bdfe-cb90bd41ee5b",
+            "type": "item",
+            "id": "orange_wool_slab",
+            "name": "橙色羊毛台阶"
+          },
+          {
+            "uuid": "06b762d2-87e8-4d48-b885-0a0986be3876",
+            "type": "item",
+            "id": "yellow_wool_slab",
+            "name": "黄色羊毛台阶"
+          },
+          {
+            "uuid": "ea3e01b6-02d1-4c2f-b665-10839719abc3",
+            "type": "item",
+            "id": "lime_wool_slab",
+            "name": "黄绿色羊毛台阶"
+          },
+          {
+            "uuid": "d3644b39-1b8e-4490-96f4-cf34bf7edf2b",
+            "type": "item",
+            "id": "green_wool_slab",
+            "name": "绿色羊毛台阶"
+          },
+          {
+            "uuid": "37369ecf-a165-4f75-aade-98bf81e7bd28",
+            "type": "item",
+            "id": "cyan_wool_slab",
+            "name": "青色羊毛台阶"
+          },
+          {
+            "uuid": "cb68df76-eaf9-45d2-bb17-a5f1969ba7c8",
+            "type": "item",
+            "id": "light_blue_wool_slab",
+            "name": "淡蓝色羊毛台阶"
+          },
+          {
+            "uuid": "a6cbb332-b796-42d0-8754-1bbc9aafe4ad",
+            "type": "item",
+            "id": "blue_wool_slab",
+            "name": "蓝色羊毛台阶"
+          },
+          {
+            "uuid": "419d3996-9edf-412c-b6b8-0692cf653b52",
+            "type": "item",
+            "id": "purple_wool_slab",
+            "name": "紫色羊毛台阶"
+          },
+          {
+            "uuid": "d429efd6-e1bb-4c12-a16d-07958d5c3c3a",
+            "type": "item",
+            "id": "magenta_wool_slab",
+            "name": "品红色羊毛台阶"
+          },
+          {
+            "uuid": "5afa1270-d5ba-4c37-b616-b90628808801",
+            "type": "item",
+            "id": "pink_wool_slab",
+            "name": "粉红色羊毛台阶"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
+      },
+      {
         "uuid": "ea0c8bce-4223-464c-b5c4-4f7bd216562f",
         "type": "group",
         "name": "混凝土",
@@ -3435,6 +3747,321 @@
             "type": "item",
             "id": "pink_concrete",
             "name": "粉红色混凝土"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
+      },
+      {
+        "uuid": "a4859024-ab2f-40d4-adfa-8a2698475524",
+        "type": "group",
+        "name": "混凝土楼梯",
+        "children": [
+          {
+            "uuid": "8190a9dd-d70e-4047-8752-de5fe64ec141",
+            "type": "item",
+            "id": "white_concrete_stairs",
+            "name": "白色混凝土楼梯"
+          },
+          {
+            "uuid": "d6c07ce1-a3f8-4df4-b7a8-26558bd71946",
+            "type": "item",
+            "id": "light_gray_concrete_stairs",
+            "name": "淡灰色混凝土楼梯"
+          },
+          {
+            "uuid": "2a9ceb57-4987-40ed-bb70-f94cc66364de",
+            "type": "item",
+            "id": "gray_concrete_stairs",
+            "name": "灰色混凝土楼梯"
+          },
+          {
+            "uuid": "4cf2783b-8247-478b-a534-bad67d23fe8b",
+            "type": "item",
+            "id": "black_concrete_stairs",
+            "name": "黑色混凝土楼梯"
+          },
+          {
+            "uuid": "40d7577f-5787-44bc-9874-6c2fbeb7b43e",
+            "type": "item",
+            "id": "brown_concrete_stairs",
+            "name": "棕色混凝土楼梯"
+          },
+          {
+            "uuid": "e89ff420-2f26-4dcd-bb56-422ca9d8eef1",
+            "type": "item",
+            "id": "red_concrete_stairs",
+            "name": "红色混凝土楼梯"
+          },
+          {
+            "uuid": "feefbde1-3c6e-4b85-aff5-7a31f9436c4a",
+            "type": "item",
+            "id": "orange_concrete_stairs",
+            "name": "橙色混凝土楼梯"
+          },
+          {
+            "uuid": "a162df1d-f6e5-4b13-9767-e015fa37ff2a",
+            "type": "item",
+            "id": "yellow_concrete_stairs",
+            "name": "黄色混凝土楼梯"
+          },
+          {
+            "uuid": "66413a46-415a-491a-ad76-755d1d511c22",
+            "type": "item",
+            "id": "lime_concrete_stairs",
+            "name": "黄绿色混凝土楼梯"
+          },
+          {
+            "uuid": "30668cda-88a7-49a8-b113-72927eac35c8",
+            "type": "item",
+            "id": "green_concrete_stairs",
+            "name": "绿色混凝土楼梯"
+          },
+          {
+            "uuid": "5f77e627-8dc5-40f9-a948-7a478242c4bb",
+            "type": "item",
+            "id": "cyan_concrete_stairs",
+            "name": "青色混凝土楼梯"
+          },
+          {
+            "uuid": "f43b3f95-bd84-4820-b01e-d2effec3f633",
+            "type": "item",
+            "id": "light_blue_concrete_stairs",
+            "name": "淡蓝色混凝土楼梯"
+          },
+          {
+            "uuid": "e1371ec9-33cd-449d-91a0-b5a8b1cf84d2",
+            "type": "item",
+            "id": "blue_concrete_stairs",
+            "name": "蓝色混凝土楼梯"
+          },
+          {
+            "uuid": "633fd1d8-dd33-4cba-a95b-5898ca1e1cd5",
+            "type": "item",
+            "id": "purple_concrete_stairs",
+            "name": "紫色混凝土楼梯"
+          },
+          {
+            "uuid": "2ba619e4-aafa-4060-9c86-41fe34d7e532",
+            "type": "item",
+            "id": "magenta_concrete_stairs",
+            "name": "品红色混凝土楼梯"
+          },
+          {
+            "uuid": "8642a8f2-9d46-40c3-9ba6-2a2a188971e5",
+            "type": "item",
+            "id": "pink_concrete_stairs",
+            "name": "粉红色混凝土楼梯"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
+      },
+      {
+        "uuid": "ae5b5628-c5a4-4710-beda-1230bf00fef0",
+        "type": "group",
+        "name": "混凝土台阶",
+        "children": [
+          {
+            "uuid": "f15e0960-fe71-4901-9cf8-ebd2ddbf5771",
+            "type": "item",
+            "id": "white_concrete_slab",
+            "name": "白色混凝土台阶"
+          },
+          {
+            "uuid": "90dd16bb-9d26-459f-8ab0-3106677a1ac6",
+            "type": "item",
+            "id": "light_gray_concrete_slab",
+            "name": "淡灰色混凝土台阶"
+          },
+          {
+            "uuid": "7592675f-7185-4c51-83a5-f54c2b1e6954",
+            "type": "item",
+            "id": "gray_concrete_slab",
+            "name": "灰色混凝土台阶"
+          },
+          {
+            "uuid": "a8938e66-d315-4880-92d0-d92b711a7444",
+            "type": "item",
+            "id": "black_concrete_slab",
+            "name": "黑色混凝土台阶"
+          },
+          {
+            "uuid": "13651397-8735-4229-8130-8f12aa71fb50",
+            "type": "item",
+            "id": "brown_concrete_slab",
+            "name": "棕色混凝土台阶"
+          },
+          {
+            "uuid": "4b7b33a3-b59a-4ee5-bee5-9221f940af8a",
+            "type": "item",
+            "id": "red_concrete_slab",
+            "name": "红色混凝土台阶"
+          },
+          {
+            "uuid": "838197c4-172a-4b9d-bb4c-f5f62bed91e7",
+            "type": "item",
+            "id": "orange_concrete_slab",
+            "name": "橙色混凝土台阶"
+          },
+          {
+            "uuid": "128055fb-c14a-4d43-adf7-d4f67f191869",
+            "type": "item",
+            "id": "yellow_concrete_slab",
+            "name": "黄色混凝土台阶"
+          },
+          {
+            "uuid": "d5fcf866-a253-4e04-b079-cccd4fae0cbb",
+            "type": "item",
+            "id": "lime_concrete_slab",
+            "name": "黄绿色混凝土台阶"
+          },
+          {
+            "uuid": "07d0de09-9e63-4685-af0b-2bc6ad0953e2",
+            "type": "item",
+            "id": "green_concrete_slab",
+            "name": "绿色混凝土台阶"
+          },
+          {
+            "uuid": "65e760fb-3acb-4eff-8c67-490b92075c15",
+            "type": "item",
+            "id": "cyan_concrete_slab",
+            "name": "青色混凝土台阶"
+          },
+          {
+            "uuid": "9af7a341-d2ee-4156-b947-220014eaec50",
+            "type": "item",
+            "id": "light_blue_concrete_slab",
+            "name": "淡蓝色混凝土台阶"
+          },
+          {
+            "uuid": "0857a298-c114-4da8-af61-dc6f1b504795",
+            "type": "item",
+            "id": "blue_concrete_slab",
+            "name": "蓝色混凝土台阶"
+          },
+          {
+            "uuid": "42923653-abd6-4042-aeb0-367d2d9b09a6",
+            "type": "item",
+            "id": "purple_concrete_slab",
+            "name": "紫色混凝土台阶"
+          },
+          {
+            "uuid": "85b7e79c-8a63-4b28-9438-9301cf3d60a2",
+            "type": "item",
+            "id": "magenta_concrete_slab",
+            "name": "品红色混凝土台阶"
+          },
+          {
+            "uuid": "e493271c-2660-4d42-9c66-d5d4138d50c0",
+            "type": "item",
+            "id": "pink_concrete_slab",
+            "name": "粉红色混凝土台阶"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
+      },
+      {
+        "uuid": "85713928-c041-4a45-a6c1-61e8f3771bd6",
+        "type": "group",
+        "name": "坐垫",
+        "children": [
+          {
+            "uuid": "1ff546fc-72df-4ebe-8b55-8d3aef588e56",
+            "type": "item",
+            "id": "white_cushion",
+            "name": "白色坐垫"
+          },
+          {
+            "uuid": "840be20d-629f-40b4-8522-96de451b88fb",
+            "type": "item",
+            "id": "light_gray_cushion",
+            "name": "淡灰色坐垫"
+          },
+          {
+            "uuid": "b1b9daef-18d1-4c91-97a5-12ba0de8b0f4",
+            "type": "item",
+            "id": "gray_cushion",
+            "name": "灰色坐垫"
+          },
+          {
+            "uuid": "6890421d-5e6e-4632-ab13-ccbf1df20965",
+            "type": "item",
+            "id": "black_cushion",
+            "name": "黑色坐垫"
+          },
+          {
+            "uuid": "05a38846-ded0-48cd-af3e-b08ffc5b0389",
+            "type": "item",
+            "id": "brown_cushion",
+            "name": "棕色坐垫"
+          },
+          {
+            "uuid": "1f3e6230-ec58-43ee-81e1-8f6a4d0ab2f1",
+            "type": "item",
+            "id": "red_cushion",
+            "name": "红色坐垫"
+          },
+          {
+            "uuid": "6d7b9fa6-714f-4c26-ae51-b6627152e49a",
+            "type": "item",
+            "id": "orange_cushion",
+            "name": "橙色坐垫"
+          },
+          {
+            "uuid": "448e79db-cf21-4578-b751-e5ad599b9720",
+            "type": "item",
+            "id": "yellow_cushion",
+            "name": "黄色坐垫"
+          },
+          {
+            "uuid": "4a1cfd22-cb54-49f5-bff5-0f04511263b3",
+            "type": "item",
+            "id": "lime_cushion",
+            "name": "黄绿色坐垫"
+          },
+          {
+            "uuid": "a5530420-6416-4074-b4aa-a61abf927b3b",
+            "type": "item",
+            "id": "green_cushion",
+            "name": "绿色坐垫"
+          },
+          {
+            "uuid": "631e98bc-b940-4da6-b587-750c302ec86a",
+            "type": "item",
+            "id": "cyan_cushion",
+            "name": "青色坐垫"
+          },
+          {
+            "uuid": "0880f1b8-c2cd-4ec8-9b68-51848f55f405",
+            "type": "item",
+            "id": "light_blue_cushion",
+            "name": "淡蓝色坐垫"
+          },
+          {
+            "uuid": "62519696-7cdc-4529-8c96-772030b09a71",
+            "type": "item",
+            "id": "blue_cushion",
+            "name": "蓝色坐垫"
+          },
+          {
+            "uuid": "39ddb78a-d125-4073-8fa7-12d93b44bb1a",
+            "type": "item",
+            "id": "purple_cushion",
+            "name": "紫色坐垫"
+          },
+          {
+            "uuid": "d57de1d3-2a3d-4157-ba75-704409f45af2",
+            "type": "item",
+            "id": "magenta_cushion",
+            "name": "品红色坐垫"
+          },
+          {
+            "uuid": "c94c39b6-cb25-4c84-b61b-4e0eb1b420e0",
+            "type": "item",
+            "id": "pink_cushion",
+            "name": "粉红色坐垫"
           }
         ],
         "collapsed": true,
@@ -3740,6 +4367,12 @@
             "type": "item",
             "id": "stone_button",
             "name": "石头按钮"
+          },
+          {
+            "uuid": "f39d673e-a308-41b0-80fd-54340d6b6717",
+            "type": "item",
+            "id": "poplar_button",
+            "name": "杨木按钮"
           }
         ],
         "collapsed": true,
@@ -3845,6 +4478,12 @@
             "type": "item",
             "id": "polished_blackstone_pressure_plate",
             "name": "磨制黑石压力板"
+          },
+          {
+            "uuid": "47942507-d528-4f92-983d-7f6e6d548597",
+            "type": "item",
+            "id": "poplar_pressure_plate",
+            "name": "杨木压力板"
           }
         ],
         "collapsed": true,
@@ -3964,6 +4603,12 @@
             "type": "item",
             "id": "soul_campfire",
             "name": "灵魂营火"
+          },
+          {
+            "uuid": "0e22b22d-ac90-4724-b803-7ab95be80ec7",
+            "type": "item",
+            "id": "straw_bed",
+            "name": "麦秆床"
           }
         ],
         "collapsed": true
@@ -4302,6 +4947,12 @@
                 "type": "item",
                 "id": "warped_shelf",
                 "name": "诡异木展示架"
+              },
+              {
+                "uuid": "12ca5979-9cb3-4d3a-943a-bb41b2b1e8a5",
+                "type": "item",
+                "id": "poplar_shelf",
+                "name": "杨木展示架"
               }
             ],
             "collapsed": true
@@ -4862,8 +5513,8 @@
       {
         "uuid": "b1aee364-939e-43d6-89e4-c85c2f4b0897",
         "type": "item",
-        "id": "chain",
-        "name": "chain"
+        "id": "iron_chain",
+        "name": "铁链"
       },
       {
         "uuid": "e371089b-e445-4754-aec7-257e12c998e9",
@@ -7876,6 +8527,18 @@
             "type": "item",
             "id": "bamboo_chest_raft",
             "name": "运输竹筏"
+          },
+          {
+            "uuid": "8e79e107-c2ae-496e-ba26-9a738840d52f",
+            "type": "item",
+            "id": "poplar_boat",
+            "name": "杨木船"
+          },
+          {
+            "uuid": "3ce309ff-9785-40b4-b873-bc7c34901e08",
+            "type": "item",
+            "id": "poplar_chest_boat",
+            "name": "杨木运输船"
           }
         ],
         "collapsed": true,
@@ -9203,6 +9866,12 @@
             "type": "item",
             "id": "muddy_mangrove_roots",
             "name": "沾泥的红树根"
+          },
+          {
+            "uuid": "22e9a3f4-91f4-4989-8811-267b2d66414f",
+            "type": "item",
+            "id": "poplar_sapling",
+            "name": "杨树树苗"
           }
         ],
         "collapsed": true,
@@ -9278,6 +9947,12 @@
             "type": "item",
             "id": "vine",
             "name": "藤蔓"
+          },
+          {
+            "uuid": "280a985d-c84e-4fd3-88e7-33a64998359a",
+            "type": "item",
+            "id": "red_shrub",
+            "name": "红灌木"
           }
         ],
         "collapsed": true

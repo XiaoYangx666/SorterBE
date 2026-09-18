@@ -429,6 +429,10 @@ export const AboutFormLang = defineLangTree({
 
 	changeLog: {
 		zh_CN: `
+v1.4.2(支持26.50+)
+1. 支持新版本物品
+2. 升级 SAPI-Pro 至 0.4.2-stable
+
 v1.4.1(支持26.30+)
 1. 支持新版本物品
 2. 优化分类整理表
@@ -444,6 +448,10 @@ v1.4.0（支持 26.10+）
 `,
 
 		en_US: `
+v1.4.2 (Supports 26.50+)
+1. Added support for new version items
+2. Upgraded SAPI-Pro to 0.4.2-stable
+
 v1.4.1 (Supports 26.30+)
 1. Added support for new version items
 2. Optimized the classification sorting table

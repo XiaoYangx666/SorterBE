@@ -10,9 +10,14 @@
         "pack": "bepack pack",
         "dev": "bepack dev",
         "build": "bepack build",
-        "copy": "bepack copy"
+        "copy": "bepack copy",
+        "tools:dict": "node tools/update.ts dict",
+        "tools:new": "node tools/update.ts new",
+        "tools:apply": "node tools/update.ts apply",
+        "tools:check": "node tools/update.ts check"
     },
     "devDependencies": {
+        "@bepack/cli": "^0.1.0-beta.2",
         "@types/node": "^24.10.2"
     }
 }

@@ -3,4 +3,6 @@ node_modules
 *.mcpack
 tools/data.json
 tools/vanilla.json
+tools/new_items.json
+tools/output.txt
 dist

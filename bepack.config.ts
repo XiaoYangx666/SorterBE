@@ -1,11 +1,13 @@
-export default {
+import { defineConfig, sapiPro } from "@bepack/cli";
+
+export default defineConfig({
 	root: ".",
 	target: "latest",
 	pack: {
 		outDir: "dist",
 	},
 	manifestFormat: 2,
-	version: "1.4.1",
+	version: "1.4.2",
 	name: "Sorter自动整理",
 	description: "MCBE Auto Sorter",
 	packs: {
@@ -23,7 +25,6 @@ export default {
 				"@minecraft/server-ui": "stable",
 				"sapi-pro": "stable",
 			},
-			achievement: true,
 		},
 	},
 	replace: {
@@ -34,8 +35,8 @@ export default {
 			UUID: true,
 		},
 	},
-	plugins: ["sapi-pro"],
+	plugins: [sapiPro()],
 	install: {
 		registry: "https://registry.npmmirror.com",
 	},
-};
+});

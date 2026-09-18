@@ -110,6 +110,7 @@ export const ids: string[] = [
 	"brown_mushroom_block",
 	"mushroom_stem",
 	"red_mushroom_block",
+	"shelf_mushroom",
 
 	// === 树叶方块 ===
 	"oak_leaves",
@@ -123,6 +124,9 @@ export const ids: string[] = [
 	"azalea_leaves",
 	"pale_oak_leaves",
 	"azalea_leaves_flowered",
+	"orange_poplar_leaves",
+	"red_poplar_leaves",
+	"yellow_poplar_leaves",
 
 	// === 木制品 ===
 
@@ -145,6 +149,8 @@ export const ids: string[] = [
 	"stripped_dark_oak_log",
 	"stripped_mangrove_log",
 	"stripped_pale_oak_log",
+	"poplar_log",
+	"stripped_poplar_log",
 
 	// === 原木方块 ===
 	"oak_wood",
@@ -164,6 +170,8 @@ export const ids: string[] = [
 	"stripped_cherry_wood",
 	"stripped_dark_oak_wood",
 	"stripped_pale_oak_wood",
+	"poplar_wood",
+	"stripped_poplar_wood",
 
 	// === 木板 ===
 	"oak_planks",
@@ -177,6 +185,7 @@ export const ids: string[] = [
 	"pale_oak_planks",
 	"crimson_planks",
 	"warped_planks",
+	"poplar_planks",
 
 	// === 木半砖(台阶) ===
 	"oak_slab",
@@ -191,6 +200,7 @@ export const ids: string[] = [
 	"pale_oak_slab",
 	"petrified_oak_slab",
 	"warped_slab",
+	"poplar_slab",
 
 	// === 木楼梯 ===
 	"oak_stairs",
@@ -204,6 +214,7 @@ export const ids: string[] = [
 	"mangrove_stairs",
 	"pale_oak_stairs",
 	"warped_stairs",
+	"poplar_stairs",
 
 	// === 告示牌 ===
 
@@ -219,6 +230,7 @@ export const ids: string[] = [
 	"mangrove_sign",
 	"pale_oak_sign",
 	"warped_sign",
+	"poplar_sign",
 
 	// === 悬挂式 ===
 	"oak_hanging_sign",
@@ -232,6 +244,7 @@ export const ids: string[] = [
 	"mangrove_hanging_sign",
 	"pale_oak_hanging_sign",
 	"warped_hanging_sign",
+	"poplar_hanging_sign",
 
 	// === 栅栏 ===
 	"oak_fence",
@@ -245,6 +258,7 @@ export const ids: string[] = [
 	"mangrove_fence",
 	"pale_oak_fence",
 	"warped_fence",
+	"poplar_fence",
 
 	// === 栅栏门 ===
 	"fence_gate",
@@ -258,6 +272,7 @@ export const ids: string[] = [
 	"mangrove_fence_gate",
 	"pale_oak_fence_gate",
 	"warped_fence_gate",
+	"poplar_fence_gate",
 
 	// === 木门 ===
 	"acacia_door",
@@ -271,6 +286,7 @@ export const ids: string[] = [
 	"warped_door",
 	"wooden_door",
 	"spruce_door",
+	"poplar_door",
 
 	// === 活板门 ===
 	"trapdoor",
@@ -285,6 +301,7 @@ export const ids: string[] = [
 	"bamboo_door",
 	"cherry_trapdoor",
 	"warped_trapdoor",
+	"poplar_trapdoor",
 
 	// === 竹制品 ===
 	"bamboo_block",
@@ -573,6 +590,42 @@ export const ids: string[] = [
 	"magenta_carpet",
 	"pink_carpet",
 
+	// === 羊毛楼梯 ===
+	"white_wool_stairs",
+	"light_gray_wool_stairs",
+	"gray_wool_stairs",
+	"black_wool_stairs",
+	"brown_wool_stairs",
+	"red_wool_stairs",
+	"orange_wool_stairs",
+	"yellow_wool_stairs",
+	"lime_wool_stairs",
+	"green_wool_stairs",
+	"cyan_wool_stairs",
+	"light_blue_wool_stairs",
+	"blue_wool_stairs",
+	"purple_wool_stairs",
+	"magenta_wool_stairs",
+	"pink_wool_stairs",
+
+	// === 羊毛台阶 ===
+	"white_wool_slab",
+	"light_gray_wool_slab",
+	"gray_wool_slab",
+	"black_wool_slab",
+	"brown_wool_slab",
+	"red_wool_slab",
+	"orange_wool_slab",
+	"yellow_wool_slab",
+	"lime_wool_slab",
+	"green_wool_slab",
+	"cyan_wool_slab",
+	"light_blue_wool_slab",
+	"blue_wool_slab",
+	"purple_wool_slab",
+	"magenta_wool_slab",
+	"pink_wool_slab",
+
 	// === 混凝土 ===
 	"white_concrete",
 	"light_gray_concrete",
@@ -590,6 +643,60 @@ export const ids: string[] = [
 	"purple_concrete",
 	"magenta_concrete",
 	"pink_concrete",
+
+	// === 混凝土楼梯 ===
+	"white_concrete_stairs",
+	"light_gray_concrete_stairs",
+	"gray_concrete_stairs",
+	"black_concrete_stairs",
+	"brown_concrete_stairs",
+	"red_concrete_stairs",
+	"orange_concrete_stairs",
+	"yellow_concrete_stairs",
+	"lime_concrete_stairs",
+	"green_concrete_stairs",
+	"cyan_concrete_stairs",
+	"light_blue_concrete_stairs",
+	"blue_concrete_stairs",
+	"purple_concrete_stairs",
+	"magenta_concrete_stairs",
+	"pink_concrete_stairs",
+
+	// === 混凝土台阶 ===
+	"white_concrete_slab",
+	"light_gray_concrete_slab",
+	"gray_concrete_slab",
+	"black_concrete_slab",
+	"brown_concrete_slab",
+	"red_concrete_slab",
+	"orange_concrete_slab",
+	"yellow_concrete_slab",
+	"lime_concrete_slab",
+	"green_concrete_slab",
+	"cyan_concrete_slab",
+	"light_blue_concrete_slab",
+	"blue_concrete_slab",
+	"purple_concrete_slab",
+	"magenta_concrete_slab",
+	"pink_concrete_slab",
+
+	// === 坐垫 ===
+	"white_cushion",
+	"light_gray_cushion",
+	"gray_cushion",
+	"black_cushion",
+	"brown_cushion",
+	"red_cushion",
+	"orange_cushion",
+	"yellow_cushion",
+	"lime_cushion",
+	"green_cushion",
+	"cyan_cushion",
+	"light_blue_cushion",
+	"blue_cushion",
+	"purple_cushion",
+	"magenta_cushion",
+	"pink_cushion",
 
 	// === 矿石 ===
 	"coal_ore",
@@ -644,6 +751,7 @@ export const ids: string[] = [
 	"pale_oak_button",
 	"polished_blackstone_button",
 	"stone_button",
+	"poplar_button",
 
 	// === 压力板 ===
 	"wooden_pressure_plate",
@@ -662,6 +770,7 @@ export const ids: string[] = [
 	"heavy_weighted_pressure_plate",
 	"stone_pressure_plate",
 	"polished_blackstone_pressure_plate",
+	"poplar_pressure_plate",
 
 	// === 功能方块 ===
 
@@ -683,6 +792,7 @@ export const ids: string[] = [
 	"respawn_anchor",
 	"campfire",
 	"soul_campfire",
+	"straw_bed",
 
 	// === 工作方块 ===
 	"bell",
@@ -743,6 +853,7 @@ export const ids: string[] = [
 	"bamboo_shelf",
 	"crimson_shelf",
 	"warped_shelf",
+	"poplar_shelf",
 
 	// === 铜傀儡像 ===
 	"copper_golem_statue",
@@ -837,7 +948,7 @@ export const ids: string[] = [
 	"crying_obsidian",
 	"soul_torch",
 	"soul_lantern",
-	"chain",
+	"iron_chain",
 	"target",
 	"lodestone",
 	"piglin_banner_pattern",
@@ -1359,6 +1470,8 @@ export const ids: string[] = [
 	"pale_oak_chest_boat",
 	"bamboo_raft",
 	"bamboo_chest_raft",
+	"poplar_boat",
+	"poplar_chest_boat",
 
 	// === 铁轨与矿车 ===
 	"rail",
@@ -1588,6 +1701,7 @@ export const ids: string[] = [
 	"pale_oak_sapling",
 	"mangrove_roots",
 	"muddy_mangrove_roots",
+	"poplar_sapling",
 	"deadbush",
 	"bamboo",
 
@@ -1601,6 +1715,7 @@ export const ids: string[] = [
 	"bush",
 	"nether_sprouts",
 	"vine",
+	"red_shrub",
 	"small_dripleaf_block",
 	"big_dripleaf",
 	"waterlily",

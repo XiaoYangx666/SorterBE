@@ -1,6 +1,6 @@
 ## SorterBE 自动整理
 
-![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.1_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.30+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
+![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.2_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.50+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
 
 <img src="screenshot.jpg" width="350px">
 
@@ -45,14 +45,53 @@
     - db.ts: 用到的计分板
     - main.ts: 初始化
 - tools: 用于生成 id 顺序表的相关工具
+    - update.ts: 物品表更新工具（找新物品 / 生成分类表）
+    - parse.ts: 旧版手动查找工具（保留）
+    - index.html: 可视化分类拖拽工具
+    - project.json: 分类结构（index.html 的工程文件）
+    - vanilla.json: 本地 id 字典（由工具下载，不入库）
+
+#### 游戏更新后如何加新方块
+
+> 需要 Node 22.18+（本项目使用 Node 26，可直接 `node xxx.ts`）
+
+1. 查找新版本的物品（会自动对比官方 `@minecraft/vanilla-data`）：
+
+    ```bash
+    npm run tools:new -- --from 1.26.50 --to 1.26.60
+    # 不传 --from 时使用 tools/update-state.json 里记录的已同步版本
+    ```
+
+    结果会打印待分类物品并写入 `tools/new_items.json`。
+
+2. 打开 `tools/index.html`（会各自加载 `vanilla.json` 与 `project.json`），把新物品从左侧拖进合适的分类，右上角「工程」导出覆盖 `tools/project.json`。
+
+3. 生成表并追加时间序表：
+
+    ```bash
+    npm run tools:apply -- --version 1.26.60
+    ```
+
+    会重新生成 `src/tables/categorized.ts`，并把新物品追加到 `src/tables/default.ts` 的 `//26.60新增`，同时更新版本记录。
+
+4. 检查一致性（分类表是否同步、是否有重复/漏项/改名的 id）：
+
+    ```bash
+    npm run tools:check
+    # 分类表不一致时可加 --fix 自动重新生成
+    ```
+
+5. `npm run build` 重新构建。
+
+> 其它命令：`npm run tools:dict` 更新本地字典（`--channel release` 使用正式版 id 表）。
 
 #### 如何自定义顺序
 
 > ps: 操作较为复杂，仅供开发人员参考
 
-1. 从这个网站下载 id 表 json 数据: [MCBEID 表](https://idlist.projectxero.top/)
-2. 打开 `tools/index.html` 网页，点击左上角加载字典，将下载的 id 表导入
-3. 点击网页右上角导入，导入 `tools/mc_items_project.json`。
-4. 使用网页排序分类后导出为 JSONC，修改一下成 ts，放到 `src/tables` 里面
+1. 执行 `npm run tools:dict` 下载最新 id 表 json 数据到 `tools/vanilla.json`
+2. 打开 `tools/index.html` 网页，会自动加载 `tools/vanilla.json` 字典
+3. 点击网页右上角导入，导入 `tools/project.json`。
+4. 使用网页排序分类后导出为 JSONC，放到 `src/tables` 里面（或直接执行 `npm run tools:apply -- --version <版本>` 自动生成）
 5. 在 `src/tables/index` 里面新增一条顺序表，引入自己生成的即可。
-6. 使用`npm run build`重新构建
+6. 使用 `npm run build` 重新构建
