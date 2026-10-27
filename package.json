@@ -11,13 +11,16 @@
         "dev": "bepack dev",
         "build": "bepack build",
         "copy": "bepack copy",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "tools:dict": "node tools/update.ts dict",
         "tools:new": "node tools/update.ts new",
         "tools:apply": "node tools/update.ts apply",
         "tools:check": "node tools/update.ts check"
     },
     "devDependencies": {
-        "@bepack/cli": "^0.1.0-beta.2",
-        "@types/node": "^24.10.2"
+        "@bepack/cli": "^0.1.0-beta.6",
+        "@types/node": "^24.10.2",
+        "vitest": "^5.0.5"
     }
 }
