@@ -1,10 +1,10 @@
 {
     "type": "module",
     "dependencies": {
-        "@minecraft/server": "2.8.0",
-        "@minecraft/server-ui": "2.1.0",
-        "@minecraft/vanilla-data": "1.26.33",
-        "sapi-pro": "file:../../../mcdev/SAPI-Pro/sapi-pro-0.4.2-stable.tgz"
+        "@minecraft/server": "2.10.0",
+        "@minecraft/server-ui": "2.2.0",
+        "@minecraft/vanilla-data": "^1.26.52",
+        "sapi-pro": "^0.4.2-stable"
     },
     "scripts": {
         "pack": "bepack pack",
