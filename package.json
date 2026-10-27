@@ -1,9 +1,9 @@
 {
     "type": "module",
     "dependencies": {
-        "@minecraft/server": "2.10.0",
-        "@minecraft/server-ui": "2.2.0",
-        "@minecraft/vanilla-data": "1.26.52",
+        "@minecraft/server": "2.11.0",
+        "@minecraft/server-ui": "2.3.0",
+        "@minecraft/vanilla-data": "1.26.60",
         "sapi-pro": "0.4.3-stable"
     },
     "scripts": {

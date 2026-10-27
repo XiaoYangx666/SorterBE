@@ -4,7 +4,7 @@
 
 - Node 26（最低 22.18，可直接 `node xxx.ts`）
 - `@bepack/cli` 0.1.0-beta.6（项目本地依赖，`npx bepack`）
-- ScriptAPI：`@minecraft/server` 2.10.0 / `@minecraft/server-ui` 2.2.0
+- ScriptAPI：`@minecraft/server` 2.11.0 / `@minecraft/server-ui` 2.3.0
 - 依赖库：`sapi-pro` 0.4.3-stable
 
 ## 常用命令
