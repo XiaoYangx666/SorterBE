@@ -7,18 +7,14 @@ import {
 import { intervalBus } from "sapi-pro/Event";
 import { getAllPlayers } from "sapi-pro/func";
 import { globalConfig, sorter_autoback } from "../config";
+import { logger } from "../ext";
 import { ContainerTypes, sortContainer } from "./sort";
 
 export class SorterScheduler {
-	/** 自身写入后，这段时间内的背包事件不记为玩家操作（ms） */
-	private static readonly SELF_UPDATE_WINDOW_MS = 200;
-
 	// 存储下一次整理的时间戳 (ms)
 	private readonly nextSortTimeMap: Map<string, number> = new Map();
 	// 存储最后一次手动操作的时间戳 (ms)
 	private readonly lastActionTimeMap: Map<string, number> = new Map();
-	// 自身写入的保护窗口结束时间 (ms)
-	private readonly selfUpdateUntilMap: Map<string, number> = new Map();
 
 	start() {
 		intervalBus.subscribesec((_, now) => this.tick(now));
@@ -39,11 +35,6 @@ export class SorterScheduler {
 		for (const id of this.lastActionTimeMap.keys()) {
 			if (!onlineIds.has(id)) {
 				this.lastActionTimeMap.delete(id);
-			}
-		}
-		for (const id of this.selfUpdateUntilMap.keys()) {
-			if (!onlineIds.has(id)) {
-				this.selfUpdateUntilMap.delete(id);
 			}
 		}
 	}
@@ -100,12 +91,10 @@ export class SorterScheduler {
 		// C. 执行逻辑
 		const container = player.getComponent(EntityComponentTypes.Inventory)?.container;
 		if (container) {
-			// 本次写入会触发背包变更事件，提前告知调度器，避免把自身写入当成玩家操作
-			this.onSelfUpdate(player);
-			void sortContainer(container, ContainerTypes.player, player).finally(() => {
-				// 排序表懒加载可能较慢，写入事件也可能在异步整理返回后才派发，
-				// 整理完成时再续一次保护窗口
-				this.onSelfUpdate(player);
+			// 固定时间窗口无法识别事件来源，会吞掉玩家刚整理完时的真实操作。
+			// 将自身写入也视为背包活动不会引发连续整理，因为调度使用长周期。
+			void sortContainer(container, ContainerTypes.player, player).catch((error) => {
+				logger.error("自动整理背包发生未处理异常", error);
 			});
 		}
 
@@ -115,19 +104,9 @@ export class SorterScheduler {
 	}
 
 	/**
-	 * 整理自身即将写入背包，忽略随后短时间内的背包变更事件
-	 */
-	public onSelfUpdate(player: Player) {
-		this.selfUpdateUntilMap.set(
-			player.id,
-			Date.now() + SorterScheduler.SELF_UPDATE_WINDOW_MS
-		);
-	}
-
-	/**
 	 * 外部接口：玩家背包物品变化事件。
-	 * 主背包和快捷栏的增删都属于玩家操作；自动整理只写主背包，
-	 * 自身写入由 onSelfUpdate 的保护窗口过滤。
+	 * 主背包和快捷栏的变更都视为活动（包括脚本引起的变化），
+	 * 以免依赖时间窗口误吞玩家真实操作。
 	 */
 	public onPlayerInventoryChange(t: PlayerInventoryItemChangeAfterEvent) {
 		if (!t.player) return;
@@ -144,13 +123,7 @@ export class SorterScheduler {
 	 * 外部接口：当玩家手动操作背包时调用
 	 */
 	public onPlayerAction(player: Player) {
-		const now = Date.now();
-		const until = this.selfUpdateUntilMap.get(player.id);
-		// 自身写入产生的变更不算玩家操作
-		if (until !== undefined && now < until) return;
-
-		this.selfUpdateUntilMap.delete(player.id);
-		this.lastActionTimeMap.set(player.id, now);
+		this.lastActionTimeMap.set(player.id, Date.now());
 	}
 
 	/** 设置下一次常规整理时间 */
