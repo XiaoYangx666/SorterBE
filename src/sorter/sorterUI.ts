@@ -129,6 +129,12 @@ const globalConfigForm = CommonForm.ConfigForm().create(
 			label: GlobalConfigLang.skipShulkerBox,
 			tooltip: GlobalConfigLang.skipShulkerBox,
 		},
+		autoEnderChest: {
+			type: FieldType.Boolean,
+			label: GlobalConfigLang.autoEnderChest,
+			tooltip: GlobalConfigLang.autoEnderChest_tip,
+			defaultValue: true,
+		},
 		interval: {
 			type: FieldType.Slider,
 			label: GlobalConfigLang.interval,

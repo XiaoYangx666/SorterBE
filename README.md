@@ -25,6 +25,7 @@
 1. 在地图或服务器中加上行为包。
 2. 进入游戏，聊天发送"/sorter"，即可在弹出 UI 中开启自动整理。
 3. 对着容器，发送/r，可以手动整理；对着空气，发送/r 可以整理背包。
+4. 对着末影箱，发送/r，或打开末影箱（开启自动整理时），可以整理自己的末影箱。
 
 ### 温馨提示:
 
@@ -36,6 +37,15 @@
 2. 如果你有附魔书的整理思路，我们可以再优化优化
 
 ### 开发相关
+
+#### 测试
+
+```bash
+npm test          # 运行全部单元测试
+npm run test:watch
+```
+
+测试基于 vitest，`@minecraft/server` 和 `sapi-pro` 由 `test/stubs/` 下的替身通过 `vitest.config.ts` 的别名注入，无需启动服务端。
 
 #### 项目结构
 
@@ -54,6 +64,18 @@
 #### 游戏更新后如何加新方块
 
 > 需要 Node 22.18+（本项目使用 Node 26，可直接 `node xxx.ts`）
+
+预览版发布后就可以先跑起来，提前把新物品分好类；正式版发布后再补一次：
+
+```bash
+# 1. 预览版：列出新增物品并写入 new_items.json（不改排序表）
+npm run tools:new -- --to 1.26.60-preview.30
+
+# 2. 正式版发布后：确认无遗漏，再生成分类表与时间序表
+npm run tools:new -- --to 1.26.60
+npm run tools:apply -- --version 1.26.60
+npm run tools:check && npm test && npm run build
+```
 
 1. 查找新版本的物品（会自动对比官方 `@minecraft/vanilla-data`）：
 

@@ -6,8 +6,10 @@ import { CmdLang, MessageLang } from "../lang";
 import { profiler } from "./profiler";
 import { SorterScheduler } from "./scheduler";
 import {
+	ContainerTypes,
 	entityWhiteList,
 	getBlockContainerType,
+	getEnderChestContainer,
 	getEntityContainerType,
 	sortContainer,
 } from "./sort";
@@ -59,6 +61,15 @@ world.afterEvents.playerInteractWithBlock.subscribe((t) => {
 
 	//获取方块容器
 	const BlockContainer = t.block.getComponent("inventory")?.container;
+
+	//末影箱：容器在玩家身上
+	if (t.block.typeId === "minecraft:ender_chest") {
+		if (!globalConfig.autoEnderChest) return;
+		const enderContainer = getEnderChestContainer(player);
+		if (enderContainer) sortContainer(enderContainer, ContainerTypes.enderChest, player);
+		return;
+	}
+
 	if (!BlockContainer || blockAutoSortBlackList.includes(t.block.typeId.split(":")[1])) return;
 
 	const type = getBlockContainerType(t.block);

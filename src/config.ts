@@ -42,6 +42,8 @@ export interface GlobalConfig {
 	skipBundle: boolean;
 	/**跳过潜影盒 */
 	skipShulkerBox: boolean;
+	/**自动整理末影箱 */
+	autoEnderChest: boolean;
 	/**自动整理间隔 */
 	interval: number;
 	/**操作冷却时间 */
@@ -58,6 +60,7 @@ export function isGlobalConfig(value: unknown): value is GlobalConfig {
 	return (
 		typeof v.skipBundle === "boolean" &&
 		typeof v.skipShulkerBox === "boolean" &&
+		(v.autoEnderChest === undefined || typeof v.autoEnderChest === "boolean") &&
 		typeof v.interval === "number" &&
 		typeof v.actionCooldown === "number"
 	);
@@ -66,6 +69,7 @@ export function isGlobalConfig(value: unknown): value is GlobalConfig {
 const defaultGlobalConfig: GlobalConfig = {
 	skipBundle: false,
 	skipShulkerBox: false,
+	autoEnderChest: true,
 	interval: 60,
 	actionCooldown: 10,
 	showLoadSuccessMessage: true,
@@ -87,5 +91,6 @@ export function setGlobalConfig(config: GlobalConfig) {
 
 export function getGlobalConfig() {
 	const config = Configdb.getJSON<GlobalConfig>("sorter_global", isGlobalConfig);
-	return config ?? Object.assign({}, defaultGlobalConfig);
+	// 合并默认值，兼容旧版本存档缺失的新字段
+	return Object.assign({}, defaultGlobalConfig, config ?? {});
 }

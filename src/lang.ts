@@ -21,6 +21,16 @@ export const MessageLang = defineLangTree({
 		ko_KR: "가방",
 		es_ES: "Mochila",
 	},
+	enderChest: {
+		zh_CN: "末影箱",
+		zh_TW: "終界箱",
+		en_US: "Ender Chest",
+		ja_JP: "エンダーチェスト",
+		fr_FR: "Coffre de l'Ender",
+		pt_BR: "Baú do Ender",
+		ko_KR: "엔더 상자",
+		es_ES: "Cofre del End",
+	},
 	playerSpawn: {
 		loaded: {
 			zh_CN: "§2[自动整理] 插件加载成功",
@@ -299,6 +309,26 @@ export const GlobalConfigLang = defineLangTree({
 		ko_KR: "성능 향상",
 		es_ES: "Mejora el rendimiento",
 	},
+	autoEnderChest: {
+		zh_CN: "自动整理末影箱",
+		zh_TW: "自動整理終界箱",
+		en_US: "Auto-sort ender chests",
+		ja_JP: "エンダーチェストを自動整理",
+		fr_FR: "Tri auto des coffres de l'Ender",
+		pt_BR: "Organizar baús do Ender automaticamente",
+		ko_KR: "엔더 상자 자동 정리",
+		es_ES: "Ordenar cofres del End automáticamente",
+	},
+	autoEnderChest_tip: {
+		zh_CN: "打开末影箱时自动整理（仅对开启自动整理容器的玩家生效）",
+		zh_TW: "開啟終界箱時自動整理（僅對開啟自動整理容器的玩家生效）",
+		en_US: "Sort ender chests on open (only for players with container auto-sort on)",
+		ja_JP: "エンダーチェストを開いた時に自動整理（コンテナ自動整理が有効なプレイヤーのみ）",
+		fr_FR: "Trier à l'ouverture (joueurs avec tri auto des conteneurs uniquement)",
+		pt_BR: "Organizar ao abrir (apenas jogadores com organização automática de contêineres)",
+		ko_KR: "엔더 상자를 열 때 자동 정리 (컨테이너 자동 정리가 켜진 플레이어만)",
+		es_ES: "Ordenar al abrir (solo jugadores con ordenación automática de contenedores)",
+	},
 	interval: {
 		zh_CN: "背包自动整理间隔(秒)",
 		zh_TW: "背包自動整理間隔（秒）",
@@ -429,6 +459,9 @@ export const AboutFormLang = defineLangTree({
 
 	changeLog: {
 		zh_CN: `
+v1.5.0(支持26.50+)
+1. 新增末影箱整理：对准末影箱输入/r 手动整理；开启全局配置"自动整理末影箱"后，打开末影箱自动整理
+
 v1.4.2(支持26.50+)
 1. 支持新版本物品
 2. 升级 SAPI-Pro 至 0.4.2-stable
@@ -448,6 +481,9 @@ v1.4.0（支持 26.10+）
 `,
 
 		en_US: `
+v1.5.0 (Supports 26.50+)
+1. Added ender chest sorting: use /r while aiming at an ender chest; enable the global "Auto-sort ender chests" option to sort on open
+
 v1.4.2 (Supports 26.50+)
 1. Added support for new version items
 2. Upgraded SAPI-Pro to 0.4.2-stable

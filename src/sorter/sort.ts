@@ -27,6 +27,7 @@ export const ContainerTypes = {
 	player: { minSlot: 9, cols: 9 },
 	hopper: { minSlot: 0, cols: 5 },
 	packAnimal: { minSlot: 1, cols: 5 },
+	enderChest: { minSlot: 0, cols: 9, size: 27 },
 } as const;
 export type ContainerTypes = keyof typeof ContainerTypes;
 
@@ -142,6 +143,15 @@ export async function sortContainer(
 //自动整理实体白名单
 export const packAnimals = ["llama", "donkey", "mule"];
 export const entityWhiteList = ["hopper_minecart", "chest_minecart", "chest_boat", ...packAnimals];
+
+/**获取玩家的末影箱容器 */
+export function getEnderChestContainer(player: Player): Container | undefined {
+	try {
+		return player.getComponent(EntityComponentTypes.EnderInventory)?.container;
+	} catch {
+		return undefined;
+	}
+}
 
 export function getEntityContainerType(entity: Entity): ContaienrTypeData {
 	const id = entity.typeId.split(":")[1];

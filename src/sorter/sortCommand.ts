@@ -5,13 +5,14 @@ import {
 	Player,
 	system,
 } from "@minecraft/server";
-import { Vector3Utils } from "sapi-pro";
+import { LangText, Vector3Utils } from "sapi-pro";
 import { MessageLang } from "../lang";
 import {
 	ContaienrTypeData,
 	ContainerTypes,
 	entityWhiteList,
 	getBlockContainerType,
+	getEnderChestContainer,
 	getEntityContainerType,
 	mes,
 	sortContainer,
@@ -25,19 +26,20 @@ export function sortCmdHandler(player: Player) {
 	system.run(async () => {
 		const time = await sortContainer(target.container, target.type, player);
 		mes(player, MessageLang.sortSuccess, {
-			target: target.dis === -1 ? MessageLang.backPack : "",
+			target: target.name ?? (target.dis === -1 ? MessageLang.backPack : ""),
 			time: time == 0 ? "<1" : time,
 		});
 	});
 }
 
-interface sortTargetData {
+export interface sortTargetData {
 	container: Container;
 	dis: number;
 	type: ContaienrTypeData;
+	name?: LangText;
 }
 /**获取整理目标 */
-function getSortTarget(player: Player): sortTargetData | undefined {
+export function getSortTarget(player: Player): sortTargetData | undefined {
 	const block = getSortableBlock(player);
 	const entity = getSortableEntity(player);
 
@@ -61,6 +63,17 @@ function getSortableBlock(player: Player): sortTargetData | undefined {
 	if (!block) return;
 	// 2.方块是熔炉
 	if (block.typeId.includes("furnace")) return;
+	// 2.1 末影箱：容器在玩家身上
+	if (block.typeId === "minecraft:ender_chest") {
+		const container = getEnderChestContainer(player);
+		if (!container) return;
+		return {
+			container: container,
+			dis: Vector3Utils.distance(player.location, block.location),
+			type: ContainerTypes.enderChest,
+			name: MessageLang.enderChest,
+		};
+	}
 	// 3.方块没有容器
 	const container = block?.getComponent(BlockComponentTypes.Inventory)?.container;
 	if (!container) return;
