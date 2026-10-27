@@ -517,3 +517,20 @@ describe("sortContainer - 未变化槽位识别", () => {
 		]);
 	});
 });
+
+describe("sortContainer - 配置读取异常", () => {
+	it("读取排序配置失败时返回 undefined，而非 rejected Promise", async () => {
+		const player = fakePlayer();
+		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
+		const read = vi.spyOn(sorter_method, "get").mockImplementationOnce(() => {
+			throw new Error("计分板不可用");
+		});
+		try {
+			await expect(sort(container, "common", player)).resolves.toBeUndefined();
+			expect(player.sendMessage).toHaveBeenCalledTimes(1);
+			expect(container.writes).toBe(0);
+		} finally {
+			read.mockRestore();
+		}
+	});
+});
