@@ -4,7 +4,7 @@
         "@minecraft/server": "2.10.0",
         "@minecraft/server-ui": "2.2.0",
         "@minecraft/vanilla-data": "1.26.52",
-        "sapi-pro": "0.4.2-stable"
+        "sapi-pro": "0.4.3-stable"
     },
     "scripts": {
         "pack": "bepack pack",

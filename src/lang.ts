@@ -461,6 +461,7 @@ export const AboutFormLang = defineLangTree({
 		zh_CN: `
 v1.5.0(支持26.50+)
 1. 新增末影箱整理：对准末影箱输入/r 手动整理；开启全局配置"自动整理末影箱"后，打开末影箱自动整理
+2. 升级 SAPI-Pro 至 0.4.3-stable，脚本 API 依赖升至 @minecraft/server 2.10.0
 
 v1.4.2(支持26.50+)
 1. 支持新版本物品
@@ -483,6 +484,7 @@ v1.4.0（支持 26.10+）
 		en_US: `
 v1.5.0 (Supports 26.50+)
 1. Added ender chest sorting: use /r while aiming at an ender chest; enable the global "Auto-sort ender chests" option to sort on open
+2. Upgraded SAPI-Pro to 0.4.3-stable, ScriptAPI dependency bumped to @minecraft/server 2.10.0
 
 v1.4.2 (Supports 26.50+)
 1. Added support for new version items
