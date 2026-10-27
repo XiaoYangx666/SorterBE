@@ -63,14 +63,9 @@ type SortDirfunc = (
 ) => void;
 
 function isSame(slot: SlotInfo, item: ItemStack | undefined) {
-	const previous = slot.item;
-	return (
-		(previous == undefined && item == undefined) ||
-		(previous != undefined &&
-			item != undefined &&
-			slot.amount === item.amount &&
-			previous.isStackableWith(item))
-	);
+	// 物品对象来自同一次读取，未移动时引用相同；合并会改写数量，用读取时的快照兜住。
+	// 不能用 isStackableWith：它对不可堆叠物品永远返回 false，会把工具/盔甲等每轮都重写。
+	return slot.item === item && slot.amount === item?.amount;
 }
 
 const putWithIterator = (
@@ -94,6 +89,7 @@ const putWithIterator = (
 			continue;
 		}
 
+		// 保留双写：直接覆盖会出现物品卡住、玩家无法操作的问题（实机验证），不能省成一次写入
 		container.setItem(idx, undefined);
 
 		if (j < itemArray.length) {

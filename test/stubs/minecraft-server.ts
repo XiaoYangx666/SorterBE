@@ -59,8 +59,8 @@ export const ItemComponentTypes = {
 } as const;
 
 export const PlayerInventoryType = {
-	Inventory: "inventory",
-	EnderChest: "ender_chest",
+	Hotbar: "Hotbar",
+	Inventory: "Inventory",
 } as const;
 
 export class ItemStack {
@@ -76,11 +76,16 @@ export class ItemStack {
 		this.amount = amount;
 	}
 
+	// 与真实 ItemStack.isStackableWith 一致：不可堆叠物品永远返回 false，
+	// 且自定义数据（名称、lore）不同时不可合并
 	isStackableWith(other: ItemStack) {
 		return (
+			this.maxAmount > 1 &&
 			this.typeId === other.typeId &&
+			this.maxAmount === other.maxAmount &&
 			(this.nameTag ?? "") === (other.nameTag ?? "") &&
-			this.maxAmount === other.maxAmount
+			this.lore.length === other.lore.length &&
+			this.lore.every((line, i) => line === other.lore[i])
 		);
 	}
 

@@ -35,6 +35,12 @@ function cloneItem(stack: ItemStack) {
 /** 模拟 Container，读写都做拷贝，贴近真实 API 的返回副本语义 */
 export class FakeContainer {
 	readonly items: (ItemStack | undefined)[];
+	/** setItem 调用次数（含清空），用于断言无意义写入与双写行为 */
+	writes = 0;
+	/** setItem 调用记录：[槽位, 类型 id | null] */
+	writeLog: [number, string | null][] = [];
+	/** 每格 getItem 调用次数，用于断言跳过时没有创建完整物品副本 */
+	reads: number[];
 
 	constructor(
 		readonly size: number,
@@ -44,6 +50,7 @@ export class FakeContainer {
 			const stack = items[i];
 			return stack ? cloneItem(stack) : undefined;
 		});
+		this.reads = new Array(size).fill(0);
 	}
 
 	getSlot(index: number) {
@@ -51,6 +58,7 @@ export class FakeContainer {
 		return {
 			hasItem: () => container.items[index] !== undefined,
 			getItem: () => {
+				container.reads[index]++;
 				const stack = container.items[index];
 				return stack ? cloneItem(stack) : undefined;
 			},
@@ -64,6 +72,8 @@ export class FakeContainer {
 	}
 
 	setItem(index: number, stack: ItemStack | undefined) {
+		this.writes++;
+		this.writeLog.push([index, stack?.typeId ?? null]);
 		this.items[index] = stack ? cloneItem(stack) : undefined;
 	}
 

@@ -25,6 +25,9 @@ export function sortCmdHandler(player: Player) {
 
 	system.run(async () => {
 		const time = await sortContainer(target.container, target.type, player);
+		// 失败时 sortContainer 已经提示错误，这里不再提示成功
+		if (time === undefined) return;
+
 		mes(player, MessageLang.sortSuccess, {
 			target: target.name ?? (target.dis === -1 ? MessageLang.backPack : ""),
 			time: time == 0 ? "<1" : time,
@@ -61,8 +64,8 @@ function getSortableBlock(player: Player): sortTargetData | undefined {
 	const block = hit?.block;
 	// 1.没有方块
 	if (!block) return;
-	// 2.方块是熔炉
-	if (block.typeId.includes("furnace")) return;
+	// 2.方块是熔炉类容器（含烟熏炉），整理会打乱输入/燃料/输出
+	if (block.typeId.includes("furnace") || block.typeId.includes("smoker")) return;
 	// 2.1 末影箱：容器在玩家身上
 	if (block.typeId === "minecraft:ender_chest") {
 		const container = getEnderChestContainer(player);

@@ -39,19 +39,18 @@ export interface SlotInfo {
 }
 
 /**
- * 整理container，返回整理时间
+ * 整理container，返回整理用时
  * @param container 容器
  * @param type 容器类型
  * @param player 目标玩家
- * @returns 整理用时(ms)
+ * @returns 整理用时(ms)；未执行或失败时返回 undefined
  */
 export async function sortContainer(
 	container: Container | undefined,
 	type: ContaienrTypeData = ContainerTypes.common,
 	player: Player
-) {
-	if (!container) return 0;
-	const start = Date.now();
+): Promise<number | undefined> {
+	if (!container) return undefined;
 	//获取玩家的整理配置
 	const methodIdx = sorter_method.get(player) ?? 0;
 	const dirIdx = sorter_dir.get(player) ?? 0;
@@ -59,45 +58,53 @@ export async function sortContainer(
 	const method = sortMethods[methodIdx];
 	if (!method) {
 		player.sendMessage("无法获取排序方法");
-		return 0;
-	}
-	//构造物品数组和可用槽位数组
-	const size = type.size ?? container.size;
-	const slots: SlotInfo[] = new Array(size);
-	const itemArray: ItemStack[] = [];
-
-	for (let i = type.minSlot; i < size; i++) {
-		const containerSlot = container.getSlot(i);
-		const slot: SlotInfo = {
-			slot: i,
-			available: false,
-		};
-		slots[i] = slot;
-		if (containerSlot.hasItem()) {
-			//跳过潜影盒|收纳袋
-			if (
-				(globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) ||
-				(globalConfig.skipBundle && BundleIds.has(containerSlot.typeId))
-			) {
-				continue;
-			}
-			const item = containerSlot.getItem();
-			if (!item) continue;
-			//跳过被锁定物品
-			if (item.lockMode === ItemLockMode.slot) continue;
-
-			//未跳过，则添加到物品数组
-			itemArray.push(item);
-			slot.item = item;
-			slot.amount = item.amount;
-		}
-		//设置为可用栏位
-		slot.available = true;
+		return undefined;
 	}
 
+	let start = Date.now();
 	try {
-		//使用对应的排序方法
+		// 先完成异步准备（排序表懒加载），再连续读取、排序、合并、写回。
+		// 如果在读取容器之后才 await，会中途让出执行权，期间的背包改动会让快照过期，
+		// 并发整理时也可能互相覆盖。
 		const func = await method.func(player);
+		start = Date.now();
+
+		//构造物品数组和可用槽位数组
+		const size = type.size ?? container.size;
+		const slots: SlotInfo[] = new Array(size);
+		const itemArray: ItemStack[] = [];
+
+		for (let i = type.minSlot; i < size; i++) {
+			const containerSlot = container.getSlot(i);
+			const slot: SlotInfo = {
+				slot: i,
+				available: false,
+			};
+			slots[i] = slot;
+			if (containerSlot.hasItem()) {
+				//跳过潜影盒|收纳袋：必须在 getItem() 创建完整副本之前判断，
+				//否则会为包含大量物品数据的容器白白读取一次完整数据
+				if (
+					(globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) ||
+					(globalConfig.skipBundle && BundleIds.has(containerSlot.typeId))
+				) {
+					continue;
+				}
+				const item = containerSlot.getItem();
+				if (!item) continue;
+				//跳过被锁定物品
+				if (item.lockMode === ItemLockMode.slot) continue;
+
+				//未跳过，则添加到物品数组
+				itemArray.push(item);
+				slot.item = item;
+				slot.amount = item.amount;
+			}
+			//设置为可用栏位
+			slot.available = true;
+		}
+
+		//使用对应的排序方法
 		itemArray.sort(func);
 		//合并
 		let last: ItemStack | undefined;
@@ -128,16 +135,23 @@ export async function sortContainer(
 
 		//调用对应的放置方法
 		sortDirs[dirIdx].func(container, result, slots, type);
+
+		return Date.now() - start;
 	} catch (e) {
-		if (e instanceof Error) {
-			const t = translator.createFor(player);
-			player.sendMessage(t("整理错误: ", MessageLang.sortError) + e.message);
+		try {
+			if (e instanceof Error) {
+				const t = translator.createFor(player);
+				player.sendMessage(t("整理错误: ", MessageLang.sortError) + e.message);
+			}
+		} catch (msgError) {
+			// 玩家已离线等情况下提示可能失败，不能让它变成未处理的异步异常
+			logger.error("发送整理错误提示失败", msgError);
 		}
 		logger.error("整理出错", e);
+		return undefined;
+	} finally {
+		profiler.record(player.id, start, Date.now());
 	}
-	const end = Date.now();
-	profiler.record(player.id, start, end);
-	return end - start;
 }
 
 //自动整理实体白名单

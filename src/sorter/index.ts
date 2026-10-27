@@ -1,4 +1,4 @@
-import { EntityComponentTypes, PlayerInventoryType, world } from "@minecraft/server";
+import { EntityComponentTypes, world } from "@minecraft/server";
 import { Command, formManager, pcommand, translator } from "sapi-pro";
 import { globalConfig, sorter_auto } from "../config";
 import { lang } from "../constants";
@@ -112,21 +112,6 @@ world.afterEvents.playerSpawn.subscribe((e) => {
 
 //背包物品变更订阅
 world.afterEvents.playerInventoryItemChange.subscribe((t) => {
-	if (!t.player) return;
-	if (t.inventoryType != PlayerInventoryType.Inventory) return;
-	// scheduler.onPlayerInvChange(t.player, t.beforeItemStack, t.itemStack);
-
-	const before = t.beforeItemStack;
-	const item = t.itemStack;
-	if (before != undefined && item == undefined) {
-		//拿了
-		scheduler.onPlayerAction(t.player);
-	} else {
-		//cursor判据
-		const item = t.player.getComponent(EntityComponentTypes.CursorInventory)?.item;
-		if (item) {
-			//玩家操作了
-			scheduler.onPlayerAction(t.player);
-		}
-	}
+	// 主背包和快捷栏的增删都算玩家操作；调度器内部会过滤整理自身写入的事件
+	scheduler.onPlayerInventoryChange(t);
 });
