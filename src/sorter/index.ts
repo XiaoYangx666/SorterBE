@@ -112,6 +112,6 @@ world.afterEvents.playerSpawn.subscribe((e) => {
 
 //背包物品变更订阅
 world.afterEvents.playerInventoryItemChange.subscribe((t) => {
-	// 主背包和快捷栏的增删都算玩家操作；调度器内部会过滤整理自身写入的事件
+	// 主背包和快捷栏的物品变化都记录为活动，避免依赖时间窗口漏掉真实玩家操作
 	scheduler.onPlayerInventoryChange(t);
 });
