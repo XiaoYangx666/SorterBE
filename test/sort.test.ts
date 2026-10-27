@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { globalConfig, sorter_dir, sorter_method, sorter_ordertable } from "../src/config";
 import { sortMethods } from "../src/sorter/methods";
+import { profiler } from "../src/sorter/profiler";
 import { ContainerTypes, sortContainer } from "../src/sorter/sort";
 import { sortCmdHandler } from "../src/sorter/sortCommand";
 import { ids as defaultTable } from "../src/tables/default";
@@ -531,6 +532,20 @@ describe("sortContainer - 配置读取异常", () => {
 			expect(container.writes).toBe(0);
 		} finally {
 			read.mockRestore();
+		}
+	});
+
+	it("性能记录失败不影响整理结果", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 1);
+		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
+		const record = vi.spyOn(profiler, "record").mockImplementation(() => {
+			throw new Error("记录失败");
+		});
+		try {
+			await expect(sort(container, "common", player)).resolves.toBeTypeOf("number");
+		} finally {
+			record.mockRestore();
 		}
 	});
 });

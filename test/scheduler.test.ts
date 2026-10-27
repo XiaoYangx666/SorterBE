@@ -170,6 +170,10 @@ describe("SorterScheduler - 背包活动与异步异常", () => {
 
 		internals(scheduler).tick(now + 1_000);
 		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+
+		// 自身写入只影响冷却，不会阻塞下一轮长周期整理
+		internals(scheduler).tick(now + 60_000);
+		expect(mocks.sortContainer).toHaveBeenCalledTimes(2);
 	});
 
 	it("整理刚结束后玩家操作背包，不会被时间窗口吞掉", () => {
