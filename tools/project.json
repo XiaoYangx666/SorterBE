@@ -8605,6 +8605,33 @@
           }
         ],
         "collapsed": true
+      },
+      {
+        "uuid": "2a3f51b7-11bc-40a5-a118-2c8806fadb88",
+        "type": "group",
+        "name": "冰雪",
+        "children": [
+          {
+            "uuid": "a188d10d-15a8-4d84-8763-78f0d79a7931",
+            "type": "item",
+            "id": "ice_ball",
+            "name": "冰球"
+          },
+          {
+            "uuid": "44cb7b67-6dff-4acf-b542-2381c5360ea1",
+            "type": "item",
+            "id": "ice_crystal",
+            "name": "冰晶"
+          },
+          {
+            "uuid": "3ef30eba-679b-4cd4-b721-910542a6126e",
+            "type": "item",
+            "id": "icicle",
+            "name": "冰锥"
+          }
+        ],
+        "collapsed": true,
+        "editing": false
       }
     ],
     "collapsed": true
@@ -9239,6 +9266,12 @@
         "type": "item",
         "id": "sulfur_cube_spawn_egg",
         "name": "硫方怪刷怪蛋"
+      },
+      {
+        "uuid": "73c33e61-74a6-435c-a587-c1da9331c683",
+        "type": "item",
+        "id": "frostbite_spawn_egg",
+        "name": "冻尸刷怪蛋"
       }
     ],
     "collapsed": true

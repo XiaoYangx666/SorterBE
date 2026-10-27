@@ -1484,6 +1484,11 @@ export const ids: string[] = [
 	"tnt_minecart",
 	"command_block_minecart",
 
+	// === 冰雪 ===
+	"ice_ball",
+	"ice_crystal",
+	"icicle",
+
 	// === 红石 ===
 	"redstone_torch",
 	"redstone_lamp",
@@ -1590,6 +1595,7 @@ export const ids: string[] = [
 	"parched_spawn_egg",
 	"zombie_nautilus_spawn_egg",
 	"sulfur_cube_spawn_egg",
+	"frostbite_spawn_egg",
 
 	// === 桶装生物 ===
 	"axolotl_bucket",

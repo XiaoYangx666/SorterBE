@@ -1662,4 +1662,9 @@ export const ids: string[] = [
 	"purple_concrete_slab",
 	"magenta_concrete_slab",
 	"pink_concrete_slab",
+	//26.60新增
+	"frostbite_spawn_egg",
+	"ice_ball",
+	"ice_crystal",
+	"icicle",
 ];
