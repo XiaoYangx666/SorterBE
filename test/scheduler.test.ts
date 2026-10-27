@@ -16,6 +16,7 @@ vi.mock("../src/sorter/sort", () => ({
 }));
 
 import { globalConfig, sorter_autoback } from "../src/config";
+import { logger } from "../src/ext";
 import { SorterScheduler } from "../src/sorter/scheduler";
 import { fakePlayer } from "./helpers";
 
@@ -23,7 +24,6 @@ type SchedulerInternals = {
 	tick(now: number): void;
 	nextSortTimeMap: Map<string, number>;
 	lastActionTimeMap: Map<string, number>;
-	selfUpdateUntilMap: Map<string, number>;
 };
 
 const internals = (scheduler: SorterScheduler) => scheduler as unknown as SchedulerInternals;
@@ -148,33 +148,14 @@ describe("SorterScheduler - 玩家背包事件", () => {
 	});
 });
 
-describe("SorterScheduler - 自身写入过滤", () => {
-	it("整理自身触发的事件不算玩家操作", () => {
-		const player = setUpPlayer();
-		const scheduler = new SorterScheduler();
-		const now = 4_000_000;
-		vi.useFakeTimers();
-		vi.setSystemTime(now);
-
-		scheduler.onSelfUpdate(player);
-		vi.setSystemTime(now + 100);
-		scheduler.onPlayerAction(player);
-		expect(internals(scheduler).lastActionTimeMap.has(player.id)).toBe(false);
-
-		// 窗口结束后恢复正常
-		vi.setSystemTime(now + 1_000);
-		scheduler.onPlayerAction(player);
-		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(now + 1_000);
-	});
-
-	it("自动整理写入不会重置冷却", () => {
+describe("SorterScheduler - 背包活动与异步异常", () => {
+	it("自动整理自身变更不会引发连续重复整理", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const now = 6_000_000;
 		vi.spyOn(Date, "now").mockReturnValue(now);
-
 		mocks.sortContainer.mockImplementation(() => {
-			// 模拟 setItem 触发的背包变更事件
+			// 即使由脚本写入，也视为背包活动；不影响下一轮长周期调度。
 			scheduler.onPlayerInventoryChange(
 				inventoryChange(player, PlayerInventoryType.Inventory)
 			);
@@ -183,39 +164,42 @@ describe("SorterScheduler - 自身写入过滤", () => {
 
 		internals(scheduler).nextSortTimeMap.set(player.id, now);
 		internals(scheduler).tick(now);
-
 		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
-		expect(internals(scheduler).lastActionTimeMap.has(player.id)).toBe(false);
+		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(now);
 		expect(nextTime(scheduler, player.id)).toBe(now + 60_000);
+
+		internals(scheduler).tick(now + 1_000);
+		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
 	});
 
-	it("异步准备较慢时，整理完成后的写入事件仍被过滤", async () => {
+	it("整理刚结束后玩家操作背包，不会被时间窗口吞掉", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const start = 7_000_000;
-		const nowSpy = vi.spyOn(Date, "now").mockReturnValue(start);
-
-		let resolveSort!: () => void;
-		mocks.sortContainer.mockImplementation(
-			() =>
-				new Promise<number>((resolve) => {
-					resolveSort = () => resolve(1);
-				})
-		);
+		const clock = vi.spyOn(Date, "now").mockReturnValue(start);
 
 		internals(scheduler).nextSortTimeMap.set(player.id, start);
 		internals(scheduler).tick(start);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
-
-		// 模拟排序表懒加载超过自身写入保护窗口
-		nowSpy.mockReturnValue(start + 1_000);
-		resolveSort();
-		// 等待 sortContainer 的 finally 回调执行
-		await new Promise((resolve) => setTimeout(resolve, 0));
-
+		clock.mockReturnValue(start + 50);
 		scheduler.onPlayerInventoryChange(
 			inventoryChange(player, PlayerInventoryType.Inventory)
 		);
-		expect(internals(scheduler).lastActionTimeMap.has(player.id)).toBe(false);
+		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(start + 50);
+	});
+
+	it("自动整理 Promise 意外拒绝时被捕获并记录", async () => {
+		const player = setUpPlayer();
+		const scheduler = new SorterScheduler();
+		const error = new Error("配置读取失败");
+		const log = vi.spyOn(logger, "error").mockImplementation(() => {});
+		mocks.sortContainer.mockRejectedValueOnce(error);
+		const now = 8_000_000;
+
+		internals(scheduler).nextSortTimeMap.set(player.id, now);
+		internals(scheduler).tick(now);
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(log).toHaveBeenCalledWith("自动整理背包发生未处理异常", error);
+		expect(nextTime(scheduler, player.id)).toBe(now + 60_000);
 	});
 });
