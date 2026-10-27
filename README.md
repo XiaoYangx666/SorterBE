@@ -17,8 +17,9 @@
 
 ### 下载
 
-[下载最新版](https://gitee.com/ykxyx666_admin/sorter-be/releases/latest)
-[查看全部版本](https://gitee.com/ykxyx666_admin/sorter-be/releases)
+[下载最新版](https://github.com/XiaoYangx666/SorterBE/releases/latest)
+[查看全部版本](https://github.com/XiaoYangx666/SorterBE/releases)
+[Gitee 镜像](https://gitee.com/ykxyx666_admin/sorter-be)
 
 ### 使用方法：
 
