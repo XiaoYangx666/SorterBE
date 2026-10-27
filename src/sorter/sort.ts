@@ -51,18 +51,16 @@ export async function sortContainer(
 	player: Player
 ): Promise<number | undefined> {
 	if (!container) return undefined;
-	//获取玩家的整理配置
-	const methodIdx = sorter_method.get(player) ?? 0;
-	const dirIdx = sorter_dir.get(player) ?? 0;
-
-	const method = sortMethods[methodIdx];
-	if (!method) {
-		player.sendMessage("无法获取排序方法");
-		return undefined;
-	}
-
 	let start = Date.now();
 	try {
+		// 计分板读取与排序方法校验也可能失败，需要统一异常保护。
+		const methodIdx = sorter_method.get(player) ?? 0;
+		const dirIdx = sorter_dir.get(player) ?? 0;
+		const method = sortMethods[methodIdx];
+		if (!method) {
+			player.sendMessage("无法获取排序方法");
+			return undefined;
+		}
 		// 先完成异步准备（排序表懒加载），再连续读取、排序、合并、写回。
 		// 如果在读取容器之后才 await，会中途让出执行权，期间的背包改动会让快照过期，
 		// 并发整理时也可能互相覆盖。
@@ -150,7 +148,11 @@ export async function sortContainer(
 		logger.error("整理出错", e);
 		return undefined;
 	} finally {
-		profiler.record(player.id, start, Date.now());
+		try {
+			profiler.record(player.id, start, Date.now());
+		} catch (e) {
+			logger.error("记录整理性能数据失败", e);
+		}
 	}
 }
 
