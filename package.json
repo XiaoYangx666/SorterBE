@@ -19,7 +19,7 @@
         "tools:check": "node tools/update.ts check"
     },
     "devDependencies": {
-        "@bepack/cli": "^0.1.0-beta.6",
+        "@bepack/cli": "^0.1.0-beta.7",
         "@types/node": "^24.10.2",
         "vitest": "^5.0.5"
     }
