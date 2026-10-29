@@ -1,6 +1,6 @@
 ## SorterBE 自动整理
 
-![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.3_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.50+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
+![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.3_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.60+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
 
 <img src="screenshot.jpg" width="350px">
 
@@ -11,6 +11,7 @@
 行为包特点:
 
 - 2 种整理方法, 2 种整理方向, 2 张排序表
+- 自动合并同类堆叠为满堆
 - 支持手动键入命令整理
 - 支持药水整理与实体整理
 - bds 服务器兼容
