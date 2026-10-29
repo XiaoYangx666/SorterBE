@@ -17,6 +17,9 @@ export default defineConfig({
 			moduleUuid: "8ea983b5-d841-4f81-9ecd-b222b5c73aed",
 			compile: {
 				entry: "src/main.ts",
+				typecheck: {
+					command: "bun check",
+				},
 			},
 			name: "Sorter自动整理",
 			description: "MCBE Auto Sorter",

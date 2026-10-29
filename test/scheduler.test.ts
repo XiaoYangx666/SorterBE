@@ -1,24 +1,21 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
+import * as actualSort from "../src/sorter/sort";
 import { PlayerInventoryType } from "./stubs/minecraft-server";
+import { fakePlayer } from "./helpers";
 
-const mocks = vi.hoisted(() => ({
+const mocks = {
 	players: [] as { id: string }[],
-	sortContainer: vi.fn(),
-}));
+};
 
-vi.mock("sapi-pro/func", () => ({
+mock.module("sapi-pro/func", () => ({
 	getAllPlayers: () => mocks.players,
 }));
 
-vi.mock("../src/sorter/sort", () => ({
-	ContainerTypes: { player: { minSlot: 9, cols: 9 } },
-	sortContainer: mocks.sortContainer,
-}));
+let sortContainer: ReturnType<typeof spyOn>;
 
-import { globalConfig, sorter_autoback } from "../src/config";
-import { logger } from "../src/ext";
-import { SorterScheduler } from "../src/sorter/scheduler";
-import { fakePlayer } from "./helpers";
+const { globalConfig, sorter_autoback } = await import("../src/config");
+const { logger } = await import("../src/ext");
+const { SorterScheduler } = await import("../src/sorter/scheduler");
 
 type SchedulerInternals = {
 	tick(now: number): void;
@@ -47,8 +44,7 @@ function setUpPlayer() {
 }
 
 beforeEach(() => {
-	mocks.sortContainer.mockReset();
-	mocks.sortContainer.mockResolvedValue(1);
+	sortContainer = spyOn(actualSort, "sortContainer").mockImplementation(async () => 1);
 	mocks.players = [];
 	Object.assign(globalConfig, {
 		skipBundle: false,
@@ -61,8 +57,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-	vi.useRealTimers();
-	vi.restoreAllMocks();
+	sortContainer.mockRestore();
 });
 
 describe("SorterScheduler - 时间基准", () => {
@@ -73,24 +68,24 @@ describe("SorterScheduler - 时间基准", () => {
 
 		const t0 = 1_000_000;
 		tick(t0);
-		expect(mocks.sortContainer).not.toHaveBeenCalled();
+		expect(sortContainer).not.toHaveBeenCalled();
 		expect(nextTime(scheduler, player.id)).toBe(t0 + 60_000);
 
 		// 卡顿 10 分钟，计划时间早已过期
 		const resumed = t0 + 10 * 60_000;
 		tick(resumed);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+		expect(sortContainer).toHaveBeenCalledTimes(1);
 		expect(nextTime(scheduler, player.id)).toBe(resumed + 60_000);
 
 		// 下一秒不应该再次整理
 		tick(resumed + 1_000);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+		expect(sortContainer).toHaveBeenCalledTimes(1);
 	});
 
 	it("手持物品时从当前时间推迟 5 秒", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
-		vi.spyOn(player, "getComponent").mockImplementation(((type: string) => {
+		spyOn(player, "getComponent").mockImplementation(((type: string) => {
 			if (type === "minecraft:cursor_inventory") return { item: {} };
 			return undefined;
 		}) as never);
@@ -100,7 +95,7 @@ describe("SorterScheduler - 时间基准", () => {
 		internals(scheduler).nextSortTimeMap.set(player.id, now - 3_000);
 		internals(scheduler).tick(now);
 
-		expect(mocks.sortContainer).not.toHaveBeenCalled();
+		expect(sortContainer).not.toHaveBeenCalled();
 		expect(nextTime(scheduler, player.id)).toBe(now + 5_000);
 	});
 
@@ -113,12 +108,12 @@ describe("SorterScheduler - 时间基准", () => {
 		internals(scheduler).lastActionTimeMap.set(player.id, now - 5_500);
 
 		internals(scheduler).tick(now);
-		expect(mocks.sortContainer).not.toHaveBeenCalled();
+		expect(sortContainer).not.toHaveBeenCalled();
 		// 还剩 4.5 秒冷却，而不是从当前时间再等 10 秒
 		expect(nextTime(scheduler, player.id)).toBe(now + 4_500);
 
 		internals(scheduler).tick(now + 4_500);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+		expect(sortContainer).toHaveBeenCalledTimes(1);
 	});
 });
 
@@ -127,12 +122,12 @@ describe("SorterScheduler - 玩家背包事件", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const now = 5_000_000;
-		vi.spyOn(Date, "now").mockReturnValue(now);
+		spyOn(Date, "now").mockReturnValue(now);
 
 		scheduler.onPlayerInventoryChange(inventoryChange(player, PlayerInventoryType.Hotbar));
 		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(now);
 
-		vi.spyOn(Date, "now").mockReturnValue(now + 1_000);
+		spyOn(Date, "now").mockReturnValue(now + 1_000);
 		scheduler.onPlayerInventoryChange(inventoryChange(player, PlayerInventoryType.Inventory));
 		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(now + 1_000);
 	});
@@ -140,7 +135,7 @@ describe("SorterScheduler - 玩家背包事件", () => {
 	it("非背包类型的变化不重置冷却", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
-		vi.spyOn(Date, "now").mockReturnValue(5_500_000);
+		spyOn(Date, "now").mockReturnValue(5_500_000);
 
 		scheduler.onPlayerInventoryChange(inventoryChange(player, "other"));
 
@@ -153,8 +148,8 @@ describe("SorterScheduler - 背包活动与异步异常", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const now = 6_000_000;
-		vi.spyOn(Date, "now").mockReturnValue(now);
-		mocks.sortContainer.mockImplementation(() => {
+		spyOn(Date, "now").mockReturnValue(now);
+		sortContainer.mockImplementation(() => {
 			// 即使由脚本写入，也视为背包活动；不影响下一轮长周期调度。
 			scheduler.onPlayerInventoryChange(
 				inventoryChange(player, PlayerInventoryType.Inventory)
@@ -164,23 +159,23 @@ describe("SorterScheduler - 背包活动与异步异常", () => {
 
 		internals(scheduler).nextSortTimeMap.set(player.id, now);
 		internals(scheduler).tick(now);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+		expect(sortContainer).toHaveBeenCalledTimes(1);
 		expect(internals(scheduler).lastActionTimeMap.get(player.id)).toBe(now);
 		expect(nextTime(scheduler, player.id)).toBe(now + 60_000);
 
 		internals(scheduler).tick(now + 1_000);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(1);
+		expect(sortContainer).toHaveBeenCalledTimes(1);
 
 		// 自身写入只影响冷却，不会阻塞下一轮长周期整理
 		internals(scheduler).tick(now + 60_000);
-		expect(mocks.sortContainer).toHaveBeenCalledTimes(2);
+		expect(sortContainer).toHaveBeenCalledTimes(2);
 	});
 
 	it("整理刚结束后玩家操作背包，不会被时间窗口吞掉", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const start = 7_000_000;
-		const clock = vi.spyOn(Date, "now").mockReturnValue(start);
+		const clock = spyOn(Date, "now").mockReturnValue(start);
 
 		internals(scheduler).nextSortTimeMap.set(player.id, start);
 		internals(scheduler).tick(start);
@@ -195,8 +190,8 @@ describe("SorterScheduler - 背包活动与异步异常", () => {
 		const player = setUpPlayer();
 		const scheduler = new SorterScheduler();
 		const error = new Error("配置读取失败");
-		const log = vi.spyOn(logger, "error").mockImplementation(() => {});
-		mocks.sortContainer.mockRejectedValueOnce(error);
+		const log = spyOn(logger, "error").mockImplementation(() => {});
+		sortContainer.mockRejectedValueOnce(error);
 		const now = 8_000_000;
 
 		internals(scheduler).nextSortTimeMap.set(player.id, now);

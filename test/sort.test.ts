@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { globalConfig, sorter_dir, sorter_method, sorter_ordertable } from "../src/config";
 import { sortMethods } from "../src/sorter/methods";
 import { profiler } from "../src/sorter/profiler";
@@ -344,7 +344,7 @@ describe("sortContainer - 异常处理", () => {
 		const player = fakePlayer();
 		setSortMode(player, 1);
 		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
-		vi.spyOn(container, "getSlot").mockImplementation(() => {
+		spyOn(container, "getSlot").mockImplementation(() => {
 			throw new Error("InvalidContainerError");
 		});
 
@@ -359,7 +359,7 @@ describe("sortContainer - 异常处理", () => {
 			item("minecraft:stone", 1),
 			item("minecraft:dirt", 1),
 		]);
-		vi.spyOn(container, "setItem").mockImplementation(() => {
+		spyOn(container, "setItem").mockImplementation(() => {
 			throw new Error("写入失败");
 		});
 
@@ -371,10 +371,10 @@ describe("sortContainer - 异常处理", () => {
 		const player = fakePlayer();
 		setSortMode(player, 1);
 		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
-		vi.spyOn(container, "getSlot").mockImplementation(() => {
+		spyOn(container, "getSlot").mockImplementation(() => {
 			throw new Error("InvalidContainerError");
 		});
-		vi.spyOn(player, "sendMessage").mockImplementation(() => {
+		spyOn(player, "sendMessage").mockImplementation(() => {
 			throw new Error("玩家已离线");
 		});
 
@@ -387,7 +387,7 @@ describe("sortContainer - 异常处理", () => {
 		// 背包里放两个顺序相反的东西，保证会触发写入
 		player.inventory.items[9] = item("minecraft:stone", 1);
 		player.inventory.items[10] = item("minecraft:dirt", 1);
-		vi.spyOn(player.inventory, "setItem").mockImplementation(() => {
+		spyOn(player.inventory, "setItem").mockImplementation(() => {
 			throw new Error("写入失败");
 		});
 
@@ -523,7 +523,7 @@ describe("sortContainer - 配置读取异常", () => {
 	it("读取排序配置失败时返回 undefined，而非 rejected Promise", async () => {
 		const player = fakePlayer();
 		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
-		const read = vi.spyOn(sorter_method, "get").mockImplementationOnce(() => {
+		const read = spyOn(sorter_method, "get").mockImplementationOnce(() => {
 			throw new Error("计分板不可用");
 		});
 		try {
@@ -539,7 +539,7 @@ describe("sortContainer - 配置读取异常", () => {
 		const player = fakePlayer();
 		setSortMode(player, 1);
 		const container = new FakeContainer(9, [item("minecraft:stone", 1)]);
-		const record = vi.spyOn(profiler, "record").mockImplementation(() => {
+		const record = spyOn(profiler, "record").mockImplementation(() => {
 			throw new Error("记录失败");
 		});
 		try {

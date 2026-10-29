@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { sorter_dir, sorter_method } from "../src/config";
 import { MessageLang } from "../src/lang";
 import {

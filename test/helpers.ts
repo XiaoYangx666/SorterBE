@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { mock } from "bun:test";
 import { EntityComponentTypes, ItemLockMode, ItemStack } from "./stubs/minecraft-server";
 
 type Extra = {
@@ -94,7 +94,7 @@ export function fakePlayer(id = "p1") {
 		location: { x: 0, y: 0, z: 0 },
 		enderChest,
 		inventory,
-		sendMessage: vi.fn(),
+		sendMessage: mock(),
 		getComponent(type: string) {
 			if (type === EntityComponentTypes.EnderInventory || type === "minecraft:ender_inventory") {
 				return { container: enderChest };
