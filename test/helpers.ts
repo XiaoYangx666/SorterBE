@@ -6,6 +6,7 @@ type Extra = {
 	nameTag?: string;
 	lore?: string[];
 	lockMode?: string;
+	components?: Record<string, unknown>;
 };
 
 /** 构造一个测试用物品 */
@@ -15,6 +16,7 @@ export function item(typeId: string, amount = 1, extra: Extra = {}) {
 	if (extra.nameTag !== undefined) stack.nameTag = extra.nameTag;
 	if (extra.lore !== undefined) stack.lore = extra.lore;
 	if (extra.lockMode !== undefined) stack.lockMode = extra.lockMode;
+	if (extra.components !== undefined) stack.components = extra.components;
 	return stack;
 }
 
@@ -28,6 +30,7 @@ function cloneItem(stack: ItemStack) {
 		nameTag: stack.nameTag,
 		lore: stack.lore,
 		lockMode: stack.lockMode,
+		components: stack.components,
 	});
 	return copy;
 }

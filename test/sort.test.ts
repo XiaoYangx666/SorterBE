@@ -421,6 +421,27 @@ describe("sortContainer - 写入优化与双写", () => {
 			"minecraft:dirt x1",
 		]);
 	});
+
+	it("N 方向再次整理不会重排相同排序键的物品", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 1, 1);
+		const container = new FakeContainer(18, [
+			item("minecraft:stone", 1, { nameTag: "B" }),
+			item("minecraft:dirt", 1),
+			item("minecraft:stone", 1, { nameTag: "A" }),
+			item("minecraft:stone", 1),
+		]);
+
+		await sort(container, "common", player);
+		const writes = container.writes;
+		const names = container.items.map((stack) => stack?.nameTag ?? null);
+
+		await sort(container, "common", player);
+
+		// 读取顺序必须与放置顺序一致，否则相同排序键的物品每次都会互换位置并重复写入
+		expect(container.writes).toBe(writes);
+		expect(container.items.map((stack) => stack?.nameTag ?? null)).toEqual(names);
+	});
 });
 
 describe("sortContainer - 异常处理", () => {

@@ -70,6 +70,8 @@ export class ItemStack {
 	nameTag?: string;
 	lore: string[] = [];
 	lockMode: string = ItemLockMode.none;
+	/** 物品组件替身，按组件 id 索引 */
+	components: Record<string, unknown> = {};
 
 	constructor(typeId: string, amount = 1) {
 		this.typeId = typeId;
@@ -89,7 +91,7 @@ export class ItemStack {
 		);
 	}
 
-	getComponent() {
-		return undefined;
+	getComponent(type: string) {
+		return this.components[type];
 	}
 }
