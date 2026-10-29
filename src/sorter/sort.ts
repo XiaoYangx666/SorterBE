@@ -19,6 +19,8 @@ export interface ContaienrTypeData {
 	minSlot: number;
 	cols: number;
 	size?: number;
+	/**该容器无法使用 ContainerSlot，只能按索引读取（如末影箱） */
+	byIndex?: boolean;
 }
 
 /**各种容器类型 */
@@ -27,7 +29,8 @@ export const ContainerTypes = {
 	player: { minSlot: 9, cols: 9 },
 	hopper: { minSlot: 0, cols: 5 },
 	packAnimal: { minSlot: 1, cols: 5 },
-	enderChest: { minSlot: 0, cols: 9, size: 27 },
+	// 末影箱是虚拟容器，BDS 返回的 ContainerSlot 引用全部无效，只能按索引读取
+	enderChest: { minSlot: 0, cols: 9, size: 27, byIndex: true },
 } as const;
 export type ContainerTypes = keyof typeof ContainerTypes;
 
@@ -54,21 +57,24 @@ function shouldSkipItem(typeId: string) {
 /**
  * 读取一个容器槽位。
  *
- * 末影箱这类虚拟容器的槽位引用在 BDS 中不保证可用：空槽调用 hasItem()/typeId
- * 会抛 InvalidContainerSlotError（"The container slot is either empty or is no longer loaded."）。
- * 槽位引用失效时退回 Container.getItem 按索引读取；其余容器仍走 ContainerSlot 快路径，
- * 跳过潜影盒|收纳袋时不必创建完整物品副本。
+ * 末影箱等虚拟容器返回的 ContainerSlot 引用全部无效，访问 hasItem()/typeId
+ * 会抛 InvalidContainerSlotError（"The container slot is either empty or is no longer loaded."），
+ * 这类容器（byIndex）直接用 Container.getItem 按索引读取。
+ * 其余容器走 ContainerSlot 快路径，跳过潜影盒|收纳袋时不必创建完整物品副本；
+ * 引用失效或访问抛错时同样退回按索引读取。
  */
-function readSlot(container: Container, index: number): SlotReadResult {
-	const containerSlot = container.getSlot(index);
-	if (containerSlot.isValid) {
-		try {
-			if (!containerSlot.hasItem()) return {};
-			if (shouldSkipItem(containerSlot.typeId)) return { skip: true };
-			const item = containerSlot.getItem();
-			return item ? { item } : {};
-		} catch {
-			//槽位引用不可用，退回按索引读取
+function readSlot(container: Container, index: number, byIndex = false): SlotReadResult {
+	if (!byIndex) {
+		const containerSlot = container.getSlot(index);
+		if (containerSlot.isValid) {
+			try {
+				if (!containerSlot.hasItem()) return {};
+				if (shouldSkipItem(containerSlot.typeId)) return { skip: true };
+				const item = containerSlot.getItem();
+				return item ? { item } : {};
+			} catch {
+				//槽位引用不可用，退回按索引读取
+			}
 		}
 	}
 
@@ -174,7 +180,7 @@ export async function sortContainer(
 			};
 			slots[i] = slot;
 
-			const read = readSlot(container, i);
+			const read = readSlot(container, i, type.byIndex);
 			//跳过潜影盒|收纳袋：保持不可用，整理时不会移入或移出
 			if (read.skip) continue;
 			if (read.item) {

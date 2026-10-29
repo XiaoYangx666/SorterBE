@@ -320,14 +320,14 @@ export const GlobalConfigLang = defineLangTree({
 		es_ES: "Ordenar cofres del End automáticamente",
 	},
 	autoEnderChest_tip: {
-		zh_CN: "打开末影箱时自动整理（仅对开启自动整理容器的玩家生效）",
-		zh_TW: "開啟終界箱時自動整理（僅對開啟自動整理容器的玩家生效）",
-		en_US: "Sort ender chests on open (only for players with container auto-sort on)",
-		ja_JP: "エンダーチェストを開いた時に自動整理（コンテナ自動整理が有効なプレイヤーのみ）",
-		fr_FR: "Trier à l'ouverture (joueurs avec tri auto des conteneurs uniquement)",
-		pt_BR: "Organizar ao abrir (apenas jogadores com organização automática de contêineres)",
-		ko_KR: "엔더 상자를 열 때 자동 정리 (컨테이너 자동 정리가 켜진 플레이어만)",
-		es_ES: "Ordenar al abrir (solo jugadores con ordenación automática de contenedores)",
+		zh_CN: "打开末影箱时自动整理（较慢，默认关闭）",
+		zh_TW: "開啟終界箱時自動整理（較慢，預設關閉）",
+		en_US: "Sort ender chests on open (slower, off by default)",
+		ja_JP: "エンダーチェストを開いた時に自動整理（重い・既定でオフ）",
+		fr_FR: "Trier à l'ouverture (plus lent, désactivé par défaut)",
+		pt_BR: "Organizar ao abrir (mais lento, desativado por padrão)",
+		ko_KR: "엔더 상자를 열 때 자동 정리 (느림, 기본 꺼짐)",
+		es_ES: "Ordenar al abrir (más lento, desactivado por defecto)",
 	},
 	interval: {
 		zh_CN: "背包自动整理间隔(秒)",
@@ -460,7 +460,7 @@ export const AboutFormLang = defineLangTree({
 	changeLog: {
 		zh_CN: `
 v1.5.0(支持26.60+)
-1. 新增末影箱整理：对准末影箱输入/r 手动整理；开启全局配置"自动整理末影箱"后，打开末影箱自动整理
+1. 新增末影箱整理：对准末影箱输入/r 手动整理；全局配置"自动整理末影箱"默认关闭（末影箱只能逐格读取、整理较慢），需要时再开启
 2. 整理时会在同类物品的所有未满堆中合并，不再被中间的其他物品阻隔
 3. 支持 26.60 新版本物品
 4. 升级 SAPI-Pro 至 0.4.3-stable，脚本 API 依赖升至 @minecraft/server 2.11.0
@@ -486,7 +486,7 @@ v1.4.0（支持 26.10+）
 
 		en_US: `
 v1.5.0 (Supports 26.60+)
-1. Added ender chest sorting: use /r while aiming at an ender chest; enable the global "Auto-sort ender chests" option to sort on open
+1. Added ender chest sorting: use /r while aiming at an ender chest; the global "Auto-sort ender chests" option is off by default (reading an ender chest slot by slot is slower), enable it if needed
 2. Stacks of the same item now merge into every unfilled stack, even when separated by other items
 3. Added support for new 26.60 items
 4. Upgraded SAPI-Pro to 0.4.3-stable, ScriptAPI dependency bumped to @minecraft/server 2.11.0

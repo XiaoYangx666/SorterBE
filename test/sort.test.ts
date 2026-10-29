@@ -219,17 +219,20 @@ describe("sortContainer - 末影箱虚拟容器", () => {
 		return Array.from({ length: size }, () => undefined as ReturnType<typeof item> | undefined);
 	}
 
-	it("槽位引用无效时退回按索引读取", async () => {
+	it("末影箱按索引读取，不使用槽位引用", async () => {
 		const player = fakePlayer();
 		setSortMode(player, 1);
 		const items = emptyItems(27);
 		items[5] = item("minecraft:stone", 5);
 		items[20] = item("minecraft:dirt", 3);
 		const container = new FakeContainer(27, items);
-		container.slotRefsValid = false;
+		const getSlot = spyOn(container, "getSlot").mockImplementation(() => {
+			throw new Error("The container slot is either empty or is no longer loaded.");
+		});
 
 		await expect(sort(container, "enderChest", player)).resolves.toBeTypeOf("number");
 
+		expect(getSlot).not.toHaveBeenCalled();
 		const snapshot = container.snapshot();
 		expect(snapshot[0]).toBe("minecraft:dirt x3");
 		expect(snapshot[1]).toBe("minecraft:stone x5");
@@ -237,12 +240,29 @@ describe("sortContainer - 末影箱虚拟容器", () => {
 		expect(player.sendMessage).not.toHaveBeenCalled();
 	});
 
+	it("槽位引用无效时退回按索引读取", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 1);
+		const container = new FakeContainer(9, [
+			undefined,
+			item("minecraft:stone", 5),
+			undefined,
+			item("minecraft:dirt", 3),
+		]);
+		container.slotRefsValid = false;
+
+		await expect(sort(container, "common", player)).resolves.toBeTypeOf("number");
+
+		const snapshot = container.snapshot();
+		expect(snapshot[0]).toBe("minecraft:dirt x3");
+		expect(snapshot[1]).toBe("minecraft:stone x5");
+		expect(player.sendMessage).not.toHaveBeenCalled();
+	});
+
 	it("槽位引用访问抛错时退回按索引读取", async () => {
 		const player = fakePlayer();
 		setSortMode(player, 1);
-		const items = emptyItems(27);
-		items[0] = item("minecraft:stone", 2);
-		const container = new FakeContainer(27, items);
+		const container = new FakeContainer(9, [item("minecraft:stone", 2)]);
 		spyOn(container, "getSlot").mockImplementation(
 			() =>
 				({
@@ -255,7 +275,7 @@ describe("sortContainer - 末影箱虚拟容器", () => {
 				}) as never
 		);
 
-		await expect(sort(container, "enderChest", player)).resolves.toBeTypeOf("number");
+		await expect(sort(container, "common", player)).resolves.toBeTypeOf("number");
 
 		expect(container.snapshot()[0]).toBe("minecraft:stone x2");
 		expect(player.sendMessage).not.toHaveBeenCalled();
@@ -269,7 +289,6 @@ describe("sortContainer - 末影箱虚拟容器", () => {
 		items[0] = item("minecraft:white_shulker_box", 1);
 		items[10] = item("minecraft:stone", 1);
 		const container = new FakeContainer(27, items);
-		container.slotRefsValid = false;
 
 		await sort(container, "enderChest", player);
 

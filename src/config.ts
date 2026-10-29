@@ -69,7 +69,8 @@ export function isGlobalConfig(value: unknown): value is GlobalConfig {
 const defaultGlobalConfig: GlobalConfig = {
 	skipBundle: false,
 	skipShulkerBox: false,
-	autoEnderChest: true,
+	// 末影箱只能按索引逐格读取，整理开销明显高于普通容器，默认关闭
+	autoEnderChest: false,
 	interval: 60,
 	actionCooldown: 10,
 	showLoadSuccessMessage: true,

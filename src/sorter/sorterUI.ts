@@ -133,7 +133,7 @@ const globalConfigForm = CommonForm.ConfigForm().create(
 			type: FieldType.Boolean,
 			label: GlobalConfigLang.autoEnderChest,
 			tooltip: GlobalConfigLang.autoEnderChest_tip,
-			defaultValue: true,
+			defaultValue: false,
 		},
 		interval: {
 			type: FieldType.Slider,
