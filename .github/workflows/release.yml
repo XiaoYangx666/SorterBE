@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build & Publish
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check tag matches config version
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"
+          VER="$(sed -n 's/^[[:space:]]*version:[[:space:]]*"\([^"]*\)".*/\1/p' bepack.config.ts | head -n1)"
+          echo "tag=${TAG} config=${VER}"
+          if [ -z "${VER}" ]; then
+            echo "::error::无法从 bepack.config.ts 读取 version"
+            exit 1
+          fi
+          if [ "${TAG}" != "${VER}" ]; then
+            echo "::error::tag 版本（${TAG}）与 bepack.config.ts 的 version（${VER}）不一致"
+            exit 1
+          fi
+
+      - name: Check sort tables
+        run: bun run tools:check
+
+      - name: Build
+        run: bun run build
+
+      - name: Test
+        run: bun run test
+
+      - name: Pack
+        run: bun run pack
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: sorter-be-mcpack
+          path: dist/*.mcpack
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ github.ref_name }}
+          files: dist/*.mcpack
+          fail_on_unmatched_files: true
+          generate_release_notes: true
