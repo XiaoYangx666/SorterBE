@@ -43,7 +43,7 @@ tools/             物品表工具与分类工程文件
 test/              bun test 测试与运行时替身
 ```
 
-线上目录 `/server/server1/development_behavior_packs/sorter-be` 本身就是服务器的开发包，`bun run build` 后 `scripts/` 直接生效；**重载/重启服务端前必须先取得确认**。
+构建产物 `scripts/` 就是服务端的开发包目录，`bun run build` 后直接生效；**重载/重启服务端前必须先取得确认**。
 
 ## 测试
 

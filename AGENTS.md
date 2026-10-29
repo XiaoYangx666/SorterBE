@@ -8,7 +8,7 @@ SorterBE 是 Minecraft 基岩版自动整理行为包，TypeScript 编写，用 
 - 类型检查走 `bun check`（`bepack.config.ts` 里配置），不需要 `typescript` 依赖
 - 入口 `src/main.ts` → 构建产物 `scripts/`（**勿手改**脚本产物，改 `src/` 后重新构建）
 - 运行时依赖：`@minecraft/server` 2.11.0、`@minecraft/server-ui` 2.3.0、`sapi-pro` 0.4.3-stable（均为精确版本）
-- 本目录就是服务器的开发包（`/server/server1/development_behavior_packs/sorter-be`）：构建后要重载/重启服务端才生效，**必须先取得用户同意**
+- 构建后需要重载/重启服务端才生效，**必须先取得用户同意**
 - 完整开发文档：`docs/development.md`
 
 ## 代码地图
