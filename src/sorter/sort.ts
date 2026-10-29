@@ -162,6 +162,11 @@ export async function sortContainer(
 			player.sendMessage("无法获取排序方法");
 			return undefined;
 		}
+		const dir = sortDirs[dirIdx];
+		if (!dir) {
+			player.sendMessage("无法获取整理方向");
+			return undefined;
+		}
 		// 先完成异步准备（排序表懒加载），再连续读取、排序、合并、写回。
 		// 如果在读取容器之后才 await，会中途让出执行权，期间的背包改动会让快照过期，
 		// 并发整理时也可能互相覆盖。
@@ -173,7 +178,8 @@ export async function sortContainer(
 		const slots: SlotInfo[] = new Array(size);
 		const itemArray: ItemStack[] = [];
 
-		for (let i = type.minSlot; i < size; i++) {
+		// 读取顺序必须与放置顺序一致，否则排序键相同的物品会在每次整理时互换位置
+		for (const i of dir.order(type, size)) {
 			const slot: SlotInfo = {
 				slot: i,
 				available: false,
@@ -202,7 +208,7 @@ export async function sortContainer(
 		const result = mergeStacks(itemArray);
 
 		//调用对应的放置方法
-		sortDirs[dirIdx].func(container, result, slots, type);
+		dir.func(container, result, slots, type);
 
 		return Date.now() - start;
 	} catch (e) {

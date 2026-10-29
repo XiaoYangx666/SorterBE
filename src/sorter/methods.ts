@@ -53,8 +53,11 @@ export const sortMethods: CompareMethod[] = [
 //---整理方向---
 interface SortDir {
 	name: string;
+	/**槽位遍历顺序；读取与放置必须用同一顺序，否则相同排序键的物品每次整理都会互换位置 */
+	order: SortOrder;
 	func: SortDirfunc;
 }
+type SortOrder = (type: ContaienrTypeData, size: number) => Iterable<number>;
 type SortDirfunc = (
 	container: Container,
 	itemArray: ItemStack[],
@@ -72,11 +75,11 @@ const putWithIterator = (
 	container: Container,
 	itemArray: ItemStack[],
 	slots: SlotInfo[],
-	iterator: () => Iterable<number>
+	iterator: Iterable<number>
 ) => {
 	let j = 0;
 
-	for (const idx of iterator()) {
+	for (const idx of iterator) {
 		const slot = slots[idx];
 		const item: ItemStack | undefined = itemArray[j];
 
@@ -99,32 +102,32 @@ const putWithIterator = (
 	}
 };
 
-const putInZ: SortDirfunc = (container, itemArray, slots, type) => {
-	const min = type.minSlot;
+const zOrder: SortOrder = function* (type, size) {
+	for (let i = type.minSlot; i < size; i++) {
+		yield i;
+	}
+};
 
-	putWithIterator(container, itemArray, slots, function* () {
-		for (let i = min; i < slots.length; i++) {
-			yield i;
+const nOrder: SortOrder = function* (type, size) {
+	const { cols, minSlot } = type;
+	const rows = Math.floor((size - minSlot) / cols);
+	for (let col = 0; col < cols; col++) {
+		for (let row = 0; row < rows; row++) {
+			yield col + row * cols + minSlot;
 		}
-	});
+	}
+};
+
+const putInZ: SortDirfunc = (container, itemArray, slots, type) => {
+	putWithIterator(container, itemArray, slots, zOrder(type, slots.length));
 };
 
 const putInN: SortDirfunc = (container, itemArray, slots, type) => {
-	const cols = type.cols;
-	const min = type.minSlot;
 	const size = type.size ?? container.size;
-	const rows = Math.floor((size - min) / cols);
-
-	putWithIterator(container, itemArray, slots, function* () {
-		for (let i = 0; i < cols; i++) {
-			for (let row = 0; row < rows; row++) {
-				yield i + row * cols + min;
-			}
-		}
-	});
+	putWithIterator(container, itemArray, slots, nOrder(type, size));
 };
 
 export const sortDirs: SortDir[] = [
-	{ name: "Z", func: putInZ },
-	{ name: "N", func: putInN },
+	{ name: "Z", order: zOrder, func: putInZ },
+	{ name: "N", order: nOrder, func: putInN },
 ];

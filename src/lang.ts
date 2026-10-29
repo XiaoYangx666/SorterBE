@@ -465,6 +465,7 @@ v1.5.0(支持26.60+)
 3. 支持 26.60 新版本物品
 4. 升级 SAPI-Pro 至 0.4.3-stable，脚本 API 依赖升至 @minecraft/server 2.11.0
 5. 优化自动整理调度与背包变更处理，避免漏整理或覆盖新数据
+6. 修正 N 方向整理时排序键相同的物品反复换位、重复写入的问题
 
 v1.4.2(支持26.50+)
 1. 支持新版本物品
@@ -491,6 +492,7 @@ v1.5.0 (Supports 26.60+)
 3. Added support for new 26.60 items
 4. Upgraded SAPI-Pro to 0.4.3-stable, ScriptAPI dependency bumped to @minecraft/server 2.11.0
 5. Improved auto-sort scheduling and inventory change handling to avoid missed sorts or overwriting newer data
+6. Fixed N-direction sorts repeatedly swapping and rewriting items with identical sort keys
 
 v1.4.2 (Supports 26.50+)
 1. Added support for new version items
