@@ -4,6 +4,8 @@ export default defineConfig({
 	root: ".",
 	target: "latest",
 	pack: {
+		// 产物文件名用 ASCII，避免 GitHub 把中文名过滤成 "Sorter.-1.5.0.mcpack"
+		name: "SorterBE-{version}",
 		outDir: "dist",
 	},
 	manifestFormat: 2,
