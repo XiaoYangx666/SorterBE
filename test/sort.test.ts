@@ -519,6 +519,105 @@ describe("sortContainer - 未变化槽位识别", () => {
 	});
 });
 
+describe("sortContainer - 跨位置合并", () => {
+	it("被其他物品隔开的同类堆叠也能合并", async () => {
+		const player = fakePlayer();
+		// 排序表只按 id 比较，同 id 不同名称保持原顺序，形成 A、B、A
+		setSortMode(player, 0, 0, 0);
+		const container = new FakeContainer(9, [
+			item("minecraft:stone", 20, { nameTag: "A" }),
+			item("minecraft:stone", 10, { nameTag: "B" }),
+			item("minecraft:stone", 30, { nameTag: "A" }),
+		]);
+
+		await sort(container, "common", player);
+
+		expect(container.snapshot().slice(0, 3)).toEqual([
+			"minecraft:stone x50",
+			"minecraft:stone x10",
+			null,
+		]);
+		expect(container.items[0]?.nameTag).toBe("A");
+		expect(container.items[1]?.nameTag).toBe("B");
+	});
+
+	it("多个未满候选按顺序填满，剩余数量保留为新堆叠", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 0, 0, 0);
+		const container = new FakeContainer(9, [
+			item("minecraft:stone", 60, { nameTag: "A" }),
+			item("minecraft:stone", 10, { nameTag: "B" }),
+			item("minecraft:stone", 20, { nameTag: "A" }),
+			item("minecraft:stone", 20, { nameTag: "A" }),
+		]);
+
+		await sort(container, "common", player);
+
+		expect(container.snapshot().slice(0, 4)).toEqual([
+			"minecraft:stone x64",
+			"minecraft:stone x10",
+			"minecraft:stone x36",
+			null,
+		]);
+	});
+
+	it("跨位置也不会合并元数据不同的物品", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 0, 0, 0);
+		const container = new FakeContainer(9, [
+			item("minecraft:stone", 10, { nameTag: "A", lore: ["l1"] }),
+			item("minecraft:stone", 10, { nameTag: "B", lore: ["l1"] }),
+			item("minecraft:stone", 20, { nameTag: "A", lore: ["l1"] }),
+			item("minecraft:stone", 20, { nameTag: "A", lore: ["l2"] }),
+		]);
+
+		await sort(container, "common", player);
+
+		const snapshot = container.snapshot().slice(0, 4);
+		expect(snapshot[0]).toBe("minecraft:stone x30");
+		expect(snapshot[1]).toBe("minecraft:stone x10");
+		expect(snapshot[2]).toBe("minecraft:stone x20");
+		expect(snapshot[3]).toBeNull();
+	});
+
+	it("合并不改变物品总数", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 0, 0, 0);
+		const container = new FakeContainer(9, [
+			item("minecraft:stone", 60, { nameTag: "A" }),
+			item("minecraft:stone", 10, { nameTag: "B" }),
+			item("minecraft:stone", 20, { nameTag: "A" }),
+			item("minecraft:dirt", 5),
+			item("minecraft:dirt", 70),
+		]);
+		const total = container.items.reduce((sum, stack) => sum + (stack?.amount ?? 0), 0);
+
+		await sort(container, "common", player);
+
+		const after = container.items.reduce((sum, stack) => sum + (stack?.amount ?? 0), 0);
+		expect(after).toBe(total);
+	});
+
+	it("重复整理结果不变且不产生写入", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 0, 0, 0);
+		const container = new FakeContainer(9, [
+			item("minecraft:stone", 60, { nameTag: "A" }),
+			item("minecraft:stone", 10, { nameTag: "B" }),
+			item("minecraft:stone", 20, { nameTag: "A" }),
+		]);
+
+		await sort(container, "common", player);
+		const snapshot = container.snapshot();
+		const writes = container.writes;
+
+		await sort(container, "common", player);
+
+		expect(container.snapshot()).toEqual(snapshot);
+		expect(container.writes).toBe(writes);
+	});
+});
+
 describe("sortContainer - 配置读取异常", () => {
 	it("读取排序配置失败时返回 undefined，而非 rejected Promise", async () => {
 		const player = fakePlayer();

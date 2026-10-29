@@ -39,6 +39,61 @@ export interface SlotInfo {
 }
 
 /**
+ * 合并相同物品的堆叠。
+ *
+ * 按处理顺序维护每种 typeId 尚未满堆的候选，新物品会依次填满前面所有兼容的候选，
+ * 因此相同物品即使被其他物品隔开也能合并。是否兼容交给原生 isStackableWith 判断，
+ * 名称、lore 等数据不同的物品不会合并。返回值保持稳定排序，只是数量更紧凑。
+ * @param itemArray 已排序的物品数组（会被就地修改数量）
+ * @returns 合并后的物品数组
+ */
+export function mergeStacks(itemArray: ItemStack[]): ItemStack[] {
+	const result: ItemStack[] = [];
+	const pending = new Map<string, ItemStack[]>();
+
+	for (const item of itemArray) {
+		let remaining = item.amount;
+		//不可堆叠物品没有候选，直接放入结果
+		const candidates = item.maxAmount > 1 ? pending.get(item.typeId) : undefined;
+
+		if (candidates) {
+			//候选池只保留未满堆的物品，填满后立即移除，避免后续反复扫描
+			for (let i = 0; i < candidates.length && remaining > 0; ) {
+				const target = candidates[i];
+				if (!target.isStackableWith(item)) {
+					i++;
+					continue;
+				}
+
+				const moved = Math.min(remaining, target.maxAmount - target.amount);
+				target.amount += moved;
+				remaining -= moved;
+				//填满的候选不会再被合并，直接移出候选池
+				if (target.amount >= target.maxAmount) {
+					candidates.splice(i, 1);
+				} else {
+					i++;
+				}
+			}
+		}
+
+		if (remaining === 0) continue;
+
+		item.amount = remaining;
+		result.push(item);
+		if (remaining < item.maxAmount) {
+			if (candidates) {
+				candidates.push(item);
+			} else {
+				pending.set(item.typeId, [item]);
+			}
+		}
+	}
+
+	return result;
+}
+
+/**
  * 整理container，返回整理用时
  * @param container 容器
  * @param type 容器类型
@@ -105,31 +160,7 @@ export async function sortContainer(
 		//使用对应的排序方法
 		itemArray.sort(func);
 		//合并
-		let last: ItemStack | undefined;
-		const result: ItemStack[] = [];
-		for (let i = 0; i < itemArray.length; i++) {
-			const item = itemArray[i];
-			if (
-				last &&
-				last.typeId == item.typeId &&
-				last.isStackableWith(item) &&
-				last.amount < last.maxAmount
-			) {
-				const total = last.amount + item.amount;
-				//可以合并
-				if (total <= last.maxAmount) {
-					last.amount = total;
-				} else {
-					item.amount = total - last.maxAmount;
-					last.amount = last.maxAmount;
-					result.push(item);
-					last = item;
-				}
-			} else {
-				result.push(item);
-				last = item;
-			}
-		}
+		const result = mergeStacks(itemArray);
 
 		//调用对应的放置方法
 		sortDirs[dirIdx].func(container, result, slots, type);
