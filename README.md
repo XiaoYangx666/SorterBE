@@ -1,5 +1,7 @@
 ## SorterBE 自动整理
 
+[中文](README.md) | [English](README.en.md)
+
 ![Requires](https://img.shields.io/badge/基于-SAPI_Pro_v0.4.3_stable-blue) ![Support](https://img.shields.io/badge/支持-MCBE26.60+-green) [![1004513100](https://img.shields.io/badge/群-1004513100-red?&logo=qq)](https://qm.qq.com/q/YCQ7ohJpIc)
 
 <img src="screenshot.jpg" width="350px">
