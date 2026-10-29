@@ -38,6 +38,46 @@ export interface SlotInfo {
 	available: boolean;
 }
 
+interface SlotReadResult {
+	item?: ItemStack;
+	/**槽位被跳过（潜影盒|收纳袋），整理时保持不可用 */
+	skip?: boolean;
+}
+
+function shouldSkipItem(typeId: string) {
+	return (
+		(globalConfig.skipShulkerBox && ShulkerBoxIds.has(typeId)) ||
+		(globalConfig.skipBundle && BundleIds.has(typeId))
+	);
+}
+
+/**
+ * 读取一个容器槽位。
+ *
+ * 末影箱这类虚拟容器的槽位引用在 BDS 中不保证可用：空槽调用 hasItem()/typeId
+ * 会抛 InvalidContainerSlotError（"The container slot is either empty or is no longer loaded."）。
+ * 槽位引用失效时退回 Container.getItem 按索引读取；其余容器仍走 ContainerSlot 快路径，
+ * 跳过潜影盒|收纳袋时不必创建完整物品副本。
+ */
+function readSlot(container: Container, index: number): SlotReadResult {
+	const containerSlot = container.getSlot(index);
+	if (containerSlot.isValid) {
+		try {
+			if (!containerSlot.hasItem()) return {};
+			if (shouldSkipItem(containerSlot.typeId)) return { skip: true };
+			const item = containerSlot.getItem();
+			return item ? { item } : {};
+		} catch {
+			//槽位引用不可用，退回按索引读取
+		}
+	}
+
+	const item = container.getItem(index);
+	if (!item) return {};
+	if (shouldSkipItem(item.typeId)) return { skip: true };
+	return { item };
+}
+
 /**
  * 合并相同物品的堆叠。
  *
@@ -128,30 +168,23 @@ export async function sortContainer(
 		const itemArray: ItemStack[] = [];
 
 		for (let i = type.minSlot; i < size; i++) {
-			const containerSlot = container.getSlot(i);
 			const slot: SlotInfo = {
 				slot: i,
 				available: false,
 			};
 			slots[i] = slot;
-			if (containerSlot.hasItem()) {
-				//跳过潜影盒|收纳袋：必须在 getItem() 创建完整副本之前判断，
-				//否则会为包含大量物品数据的容器白白读取一次完整数据
-				if (
-					(globalConfig.skipShulkerBox && ShulkerBoxIds.has(containerSlot.typeId)) ||
-					(globalConfig.skipBundle && BundleIds.has(containerSlot.typeId))
-				) {
-					continue;
-				}
-				const item = containerSlot.getItem();
-				if (!item) continue;
+
+			const read = readSlot(container, i);
+			//跳过潜影盒|收纳袋：保持不可用，整理时不会移入或移出
+			if (read.skip) continue;
+			if (read.item) {
 				//跳过被锁定物品
-				if (item.lockMode === ItemLockMode.slot) continue;
+				if (read.item.lockMode === ItemLockMode.slot) continue;
 
 				//未跳过，则添加到物品数组
-				itemArray.push(item);
-				slot.item = item;
-				slot.amount = item.amount;
+				itemArray.push(read.item);
+				slot.item = read.item;
+				slot.amount = read.item.amount;
 			}
 			//设置为可用栏位
 			slot.available = true;

@@ -214,6 +214,71 @@ describe("sortContainer - 槽位规则", () => {
 	});
 });
 
+describe("sortContainer - 末影箱虚拟容器", () => {
+	function emptyItems(size: number) {
+		return Array.from({ length: size }, () => undefined as ReturnType<typeof item> | undefined);
+	}
+
+	it("槽位引用无效时退回按索引读取", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 1);
+		const items = emptyItems(27);
+		items[5] = item("minecraft:stone", 5);
+		items[20] = item("minecraft:dirt", 3);
+		const container = new FakeContainer(27, items);
+		container.slotRefsValid = false;
+
+		await expect(sort(container, "enderChest", player)).resolves.toBeTypeOf("number");
+
+		const snapshot = container.snapshot();
+		expect(snapshot[0]).toBe("minecraft:dirt x3");
+		expect(snapshot[1]).toBe("minecraft:stone x5");
+		expect(snapshot[20]).toBeNull();
+		expect(player.sendMessage).not.toHaveBeenCalled();
+	});
+
+	it("槽位引用访问抛错时退回按索引读取", async () => {
+		const player = fakePlayer();
+		setSortMode(player, 1);
+		const items = emptyItems(27);
+		items[0] = item("minecraft:stone", 2);
+		const container = new FakeContainer(27, items);
+		spyOn(container, "getSlot").mockImplementation(
+			() =>
+				({
+					isValid: true,
+					hasItem() {
+						throw new Error(
+							"The container slot is either empty or is no longer loaded."
+						);
+					},
+				}) as never
+		);
+
+		await expect(sort(container, "enderChest", player)).resolves.toBeTypeOf("number");
+
+		expect(container.snapshot()[0]).toBe("minecraft:stone x2");
+		expect(player.sendMessage).not.toHaveBeenCalled();
+	});
+
+	it("虚拟容器中跳过潜影盒同样生效", async () => {
+		globalConfig.skipShulkerBox = true;
+		const player = fakePlayer();
+		setSortMode(player, 1);
+		const items = emptyItems(27);
+		items[0] = item("minecraft:white_shulker_box", 1);
+		items[10] = item("minecraft:stone", 1);
+		const container = new FakeContainer(27, items);
+		container.slotRefsValid = false;
+
+		await sort(container, "enderChest", player);
+
+		const snapshot = container.snapshot();
+		expect(snapshot[0]).toBe("minecraft:white_shulker_box x1");
+		expect(snapshot[1]).toBe("minecraft:stone x1");
+	});
+});
+
 describe("sortContainer - 全局配置", () => {
 	it("开启跳过后潜影盒不参与整理", async () => {
 		globalConfig.skipShulkerBox = true;

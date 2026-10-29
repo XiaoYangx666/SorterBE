@@ -41,6 +41,8 @@ export class FakeContainer {
 	writeLog: [number, string | null][] = [];
 	/** 每格 getItem 调用次数，用于断言跳过时没有创建完整物品副本 */
 	reads: number[];
+	/** 槽位引用是否可用；末影箱等虚拟容器在 BDS 中可能返回无效的 ContainerSlot */
+	slotRefsValid = true;
 
 	constructor(
 		readonly size: number,
@@ -55,7 +57,24 @@ export class FakeContainer {
 
 	getSlot(index: number) {
 		const container = this;
+		if (!container.slotRefsValid) {
+			const invalid = (): never => {
+				throw new Error("The container slot is either empty or is no longer loaded.");
+			};
+			return {
+				isValid: false,
+				hasItem: invalid,
+				getItem: invalid,
+				get typeId(): string {
+					return invalid();
+				},
+				get amount(): number {
+					return invalid();
+				},
+			};
+		}
 		return {
+			isValid: true,
 			hasItem: () => container.items[index] !== undefined,
 			getItem: () => {
 				container.reads[index]++;
@@ -69,6 +88,12 @@ export class FakeContainer {
 				return container.items[index]?.amount;
 			},
 		};
+	}
+
+	getItem(index: number) {
+		this.reads[index]++;
+		const stack = this.items[index];
+		return stack ? cloneItem(stack) : undefined;
 	}
 
 	setItem(index: number, stack: ItemStack | undefined) {
