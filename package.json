@@ -8,6 +8,7 @@
     },
     "scripts": {
         "pack": "bepack pack",
+        "pack:zip": "bun tools/zip-pack.ts",
         "dev": "bepack dev",
         "build": "bepack build",
         "copy": "bepack copy",

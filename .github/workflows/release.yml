@@ -56,6 +56,9 @@ jobs:
       - name: Pack
         run: bun run pack
 
+      - name: Pack Chinese-name zip
+        run: bun run pack:zip
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -68,6 +71,8 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
-          files: dist/*.mcpack
+          files: |
+            dist/*.mcpack
+            dist/*.zip
           fail_on_unmatched_files: true
           generate_release_notes: true
