@@ -6,6 +6,11 @@
 
 <img src="screenshot.jpg" width="350px">
 
+### Download
+
+[Latest release](releases/latest)
+[All releases](releases)
+
 ### Overview
 
 An auto-sort behavior pack for Minecraft Bedrock Edition. Once enabled, opening a container sorts it automatically.
@@ -17,12 +22,6 @@ Features:
 - Manual sorting with a command
 - Potion-aware sorting and entity container sorting
 - Works on BDS (Bedrock Dedicated Server)
-
-### Download
-
-[Latest release](https://github.com/XiaoYangx666/SorterBE/releases/latest)
-[All releases](https://github.com/XiaoYangx666/SorterBE/releases)
-[Gitee mirror](https://gitee.com/ykxyx666_admin/sorter-be)
 
 ### Usage
 

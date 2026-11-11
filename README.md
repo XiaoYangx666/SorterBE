@@ -6,6 +6,11 @@
 
 <img src="screenshot.jpg" width="350px">
 
+### 下载
+
+[下载最新版](releases/latest)
+[查看全部版本](releases)
+
 ### 简介
 
 基岩版自动整理行为包，启用功能后打开容器即可自动整理。
@@ -17,12 +22,6 @@
 - 支持手动键入命令整理
 - 支持药水整理与实体整理
 - bds 服务器兼容
-
-### 下载
-
-[下载最新版](https://github.com/XiaoYangx666/SorterBE/releases/latest)
-[查看全部版本](https://github.com/XiaoYangx666/SorterBE/releases)
-[Gitee 镜像](https://gitee.com/ykxyx666_admin/sorter-be)
 
 ### 使用方法：
 
