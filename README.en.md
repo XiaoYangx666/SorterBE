@@ -8,8 +8,8 @@
 
 ### Download
 
-[Latest release](releases/latest)
-[All releases](releases)
+[Latest release](../../releases/latest)
+[All releases](../../releases)
 
 ### Overview
 

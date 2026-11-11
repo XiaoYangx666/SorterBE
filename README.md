@@ -8,8 +8,8 @@
 
 ### 下载
 
-[下载最新版](releases/latest)
-[查看全部版本](releases)
+[下载最新版](../../releases/latest)
+[查看全部版本](../../releases)
 
 ### 简介
 
